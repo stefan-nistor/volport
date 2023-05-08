@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 
 import com.volport.core.VolunteerApplication;
 
-import org.hibernate.MultiTenancyStrategy;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
@@ -17,6 +16,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+
+// TODO Remove multi-tenancy explicit settings since it's no longer needed in hibernate 6
 
 @Configuration
 public class MultiTenantSchemaHibernateConfig {
@@ -43,7 +44,6 @@ public class MultiTenantSchemaHibernateConfig {
         entityManager.setJpaVendorAdapter(this.jpaVendorAdapter());
 
         Map<String, Object> jpaPropertiesMap = new HashMap<>(jpaProperties.getProperties());
-        jpaPropertiesMap.put(AvailableSettings.DEFAULT_SCHEMA, MultiTenancyStrategy.SCHEMA);
         jpaPropertiesMap.put(AvailableSettings.MULTI_TENANT_CONNECTION_PROVIDER, tenantConnectionProvider);
         jpaPropertiesMap.put(AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER, tenantIdentifierResolver);
 
