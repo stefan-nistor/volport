@@ -50,6 +50,7 @@ public class VolunteerServiceImpl implements VolunteerService {
             throw new UserAlreadyExistsException(String.format("Volunteer with email %s already exists",
                     volunteerDTO.getEmail()));
         }
+        // maybe let user pick joinDate
         volunteerDTO.setJoinDate(LocalDate.now());
         volunteerRepository.save(mapper.map(volunteerDTO, Volunteer.class));
     }

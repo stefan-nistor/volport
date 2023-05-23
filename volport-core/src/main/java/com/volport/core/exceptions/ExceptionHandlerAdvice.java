@@ -12,8 +12,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<Object> userAlreadyExists(UserAlreadyExistsException e){
+    @ExceptionHandler({
+            ProjectAlreadyExistsException.class,
+            DepartmentAlreadyExistsException.class,
+            UserAlreadyExistsException.class,
+            PartnerAlreadyExistsException.class
+    })
+    public ResponseEntity<Object> alreadyExistsException(RuntimeException e){
         Map<String, Object> result = new HashMap<>();
         result.put("Timestamp", LocalDateTime.now());
         result.put("Message", e.getMessage());
