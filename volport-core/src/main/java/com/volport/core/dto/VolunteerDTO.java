@@ -1,11 +1,8 @@
 package com.volport.core.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -17,7 +14,7 @@ public class VolunteerDTO {
     private String lastname;
     private String email;
     private String password;
-    private Date joinDate;
+    private LocalDate joinDate;
     private boolean canVote;
 
 }

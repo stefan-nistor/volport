@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -32,7 +33,7 @@ public class Volunteer {
     private String lastname;
     private String email;
     private String password;
-    private Date joinDate;
+    private LocalDate joinDate;
     private boolean canVote;
 
     //TODO: link volunteer to project and department table

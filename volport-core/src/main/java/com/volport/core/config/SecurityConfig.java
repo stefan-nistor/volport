@@ -35,8 +35,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests()
                 .requestMatchers("api/v1/login/**").permitAll()
                 .requestMatchers("api/v1/user").permitAll()
-                .requestMatchers("/health").permitAll();
+                .requestMatchers("/health").permitAll()
+                .requestMatchers("/swagger-ui/index.html").permitAll()
+                .requestMatchers("/swagger-ui/*", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll();
 
+        http.authorizeHttpRequests().requestMatchers("/**").permitAll();
 
         http.authorizeHttpRequests().anyRequest().authenticated();
 
