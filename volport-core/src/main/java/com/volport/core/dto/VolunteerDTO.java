@@ -16,6 +16,7 @@ public class VolunteerDTO {
     private String firstname;
     private String lastname;
     private String email;
+    private String password;
     private Date joinDate;
     private boolean canVote;
 

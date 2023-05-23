@@ -3,7 +3,6 @@ package com.volport.core.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.volport.core.dto.VolunteerCreationDTO;
 import com.volport.core.dto.VolunteerDTO;
 import com.volport.core.exceptions.UserAlreadyExistsException;
 import com.volport.core.repository.VolunteerRepository;
@@ -46,10 +45,6 @@ public class VolunteerServiceImpl implements VolunteerService {
             throw new UserAlreadyExistsException(String.format("Volunteer with email %s already exists",
                     volunteerDTO.getEmail()));
         }
-    }
-
-    public void addVolunteer(VolunteerCreationDTO volunteerCreationDTO) {
-        // TODO: make some overloading here in order to expose one method for adding volunteers
     }
 
     /**
