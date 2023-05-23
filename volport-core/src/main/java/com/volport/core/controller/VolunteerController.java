@@ -37,6 +37,20 @@ public class VolunteerController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateVolunteer(@PathVariable Long id, @RequestBody VolunteerDTO volunteerDTO) {
+        var updated = volunteerService.updateVolunteer(id, volunteerDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteVolunteer(@PathVariable Long id) {
+        if(!volunteerService.deleteVolunteer(id)){
+            LOGGER.error("Error at delete volunteer with id {}", id);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+    }
 
 
 }

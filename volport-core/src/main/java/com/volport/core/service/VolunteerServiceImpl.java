@@ -1,12 +1,12 @@
 package com.volport.core.service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.volport.core.dto.VolunteerDTO;
 import com.volport.core.exceptions.UserAlreadyExistsException;
+import com.volport.core.exceptions.VolunteerNotFoundException;
 import com.volport.core.model.Volunteer;
 import com.volport.core.repository.VolunteerRepository;
 import org.modelmapper.ModelMapper;
@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 
@@ -42,9 +43,10 @@ public class VolunteerServiceImpl implements VolunteerService {
      * Add a new volunteer in database.
      *
      * @param volunteerDTO volunteer to be added
+     * @return
      */
     @Override
-    public void addVolunteer(@NotNull VolunteerDTO volunteerDTO) {
+    public VolunteerDTO addVolunteer(@NotNull VolunteerDTO volunteerDTO) {
         var volunteer = volunteerRepository.findByEmail(volunteerDTO.getEmail());
         if (volunteer.isPresent()){
             throw new UserAlreadyExistsException(String.format("Volunteer with email %s already exists",
@@ -52,7 +54,7 @@ public class VolunteerServiceImpl implements VolunteerService {
         }
         // maybe let user pick joinDate
         volunteerDTO.setJoinDate(LocalDate.now());
-        volunteerRepository.save(mapper.map(volunteerDTO, Volunteer.class));
+        return mapper.map(volunteerRepository.save(mapper.map(volunteerDTO, Volunteer.class)), VolunteerDTO.class);
     }
 
     /**
@@ -63,8 +65,17 @@ public class VolunteerServiceImpl implements VolunteerService {
      * @return {@link VolunteerDTO} the volunteer with updated data
      */
     @Override
+    @Transactional
     public VolunteerDTO updateVolunteer(Long id, VolunteerDTO volunteerDTO) {
-        return null;
+        var volunteer = volunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("No such volunteer for given id"));
+        volunteer.setCanVote(volunteerDTO.isCanVote());
+        volunteer.setEmail(volunteerDTO.getEmail());
+        volunteer.setJoinDate(volunteerDTO.getJoinDate());
+        volunteer.setFirstname(volunteerDTO.getFirstname());
+        volunteer.setLastname(volunteerDTO.getLastname());
+        volunteer.setDepartment(volunteerDTO.getDepartment());
+
+        return mapper.map(volunteerRepository.save(volunteer), VolunteerDTO.class);
     }
 
     /**
@@ -75,6 +86,8 @@ public class VolunteerServiceImpl implements VolunteerService {
      */
     @Override
     public boolean deleteVolunteer(Long id) {
-        return false;
+        volunteerRepository.findById(id).orElseThrow(() -> new VolunteerNotFoundException("No such volunteer for given id"));
+        volunteerRepository.deleteById(id);
+        return true;
     }
 }

@@ -24,4 +24,12 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         result.put("Message", e.getMessage());
         return new ResponseEntity<>(result, HttpStatus.NOT_ACCEPTABLE);
     }
+
+    @ExceptionHandler({VolunteerNotFoundException.class})
+    public ResponseEntity<Object> notFoundException(RuntimeException e){
+        Map<String, Object> result = new HashMap<>();
+        result.put("Timestamp", LocalDateTime.now());
+        result.put("Message", e.getMessage());
+        return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+    }
 }

@@ -18,8 +18,9 @@ public interface VolunteerService {
      * Add a new volunteer in database
      *
      * @param volunteerDTO volunteer to be added
+     * @return
      */
-    void addVolunteer(VolunteerDTO volunteerDTO);
+    VolunteerDTO addVolunteer(VolunteerDTO volunteerDTO);
 
     /**
      * Update a volunteer
