@@ -1,7 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import {RegisterFormComponent} from "./features/register-form/register-form.component";
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path:'',
+    redirectTo: 'Register',
+    pathMatch: "full"
+  },
+  {
+    path:'Register',
+    component: RegisterFormComponent
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
