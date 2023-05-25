@@ -7,6 +7,7 @@ import {ProjectsComponent} from "./features/projects/projects.component";
 import {VolunteersComponent} from "./features/volunteers/volunteers.component";
 import {EventsComponent} from "./features/events/events.component";
 import {ProfileComponent} from "./features/profile/profile.component";
+import {LoginFormComponent} from "./features/login-form/login-form.component";
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path:'register',
     component: RegisterFormComponent
+  },
+  {
+    path:'login',
+    component: LoginFormComponent
   },
   {
     path: 'dashboard',
