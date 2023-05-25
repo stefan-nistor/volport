@@ -51,7 +51,7 @@ const NAMES: string[] = [
   styleUrls: ['./volunteers.component.scss'],
 })
 export class VolunteersComponent implements AfterViewInit {
-  displayedColumns: string[] = ['id', 'name', 'progress', 'fruit'];
+  displayedColumns: string[] = ['id', 'name', 'progress', 'fruit', 'actions'];
   dataSource: MatTableDataSource<UserData>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -78,6 +78,7 @@ export class VolunteersComponent implements AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
   }
+
 }
 
 /** Builds and returns a new User. */
