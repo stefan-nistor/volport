@@ -1,13 +1,16 @@
 <mat-toolbar>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-    <mat-icon>menu</mat-icon>
+  <div class="example-spacer">
+    <button mat-button routerLink="/department"> Departments </button>
+    <button mat-button routerLink="/project">Projects</button>
+    <button mat-button routerLink="/volunteer">Volunteers</button>
+    <button mat-button routerLink="/event">Events</button>
+  </div>
+
+  <button mat-icon-button>
+    <mat-icon>logout</mat-icon>
   </button>
-  <span>My App</span>
-  <span class="example-spacer"></span>
-  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-    <mat-icon>favorite</mat-icon>
+  <button mat-icon-button routerLink="/profile">
+    <mat-icon>account_box</mat-icon>
   </button>
-  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-    <mat-icon>share</mat-icon>
-  </button>
+  <button class="logo" mat-button routerLink="/dashboard">Volport</button>
 </mat-toolbar>
