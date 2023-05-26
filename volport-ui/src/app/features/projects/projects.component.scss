@@ -1,6 +1,6 @@
 .example-card {
   max-width: 400px;
-  margin: 40px;
+  margin-right: 20px;
   flex: 0 0 auto;
 }
 
@@ -10,9 +10,15 @@
 }
 
 .card-list {
-  padding-top: 40px;
+  margin-top: 120px;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
+  margin-right: 60px;
+  margin-left: 60px;
+}
+
+.card-list::-webkit-scrollbar {
+  display: none;
 }
 
