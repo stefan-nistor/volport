@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Service
+//@Service
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private static final String TOKEN_PREFIX = "Bearer ";

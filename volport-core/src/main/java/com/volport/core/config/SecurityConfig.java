@@ -25,29 +25,34 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JwtAuthenticationFilter filter) {
-        this.userDetailsService = userDetailsService;
-        this.jwtAuthenticationFilter = filter;
-    }
+//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+//    private final UserDetailsServiceImpl userDetailsService;
+//
+//    @Autowired
+//    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JwtAuthenticationFilter filter) {
+//        this.userDetailsService = userDetailsService;
+//        this.jwtAuthenticationFilter = filter;
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(new AuthEntryPoint());
+//        http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(new AuthEntryPoint());
+        http.cors().and().csrf().disable().exceptionHandling();
         http.authorizeHttpRequests().antMatchers("/health").permitAll();
         http.authorizeHttpRequests().antMatchers("/swagger-ui/*", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll();
         http.authorizeHttpRequests().antMatchers("/api/v1/login").permitAll();
         http.authorizeHttpRequests().antMatchers("/swagger-ui/index.html").permitAll();
 
-        http.authorizeHttpRequests().anyRequest().authenticated()
+        http.authorizeHttpRequests().antMatchers("/api/**").authenticated()
+                .anyRequest().permitAll()
                 .and()
-                .addFilter(new AuthenticationFilter(authenticationManager()))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .oauth2ResourceServer()
+                .jwt();
 
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//                .addFilter(new AuthenticationFilter(authenticationManager()))
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
