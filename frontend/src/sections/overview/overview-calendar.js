@@ -104,7 +104,7 @@ const useChartOptions = () => {
   };
 };
 
-export const OverviewSales = (props) => {
+export const OverviewCalendar = (props) => {
   const { chartSeries, sx } = props;
   const chartOptions = useChartOptions();
 
@@ -124,36 +124,16 @@ export const OverviewSales = (props) => {
             Sync
           </Button>
         )}
-        title="Sales"
+        title="Calendar"
       />
-      <CardContent>
-        <Chart
-          height={350}
-          options={chartOptions}
-          series={chartSeries}
-          type="bar"
-          width="100%"
-        />
-      </CardContent>
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          color="inherit"
-          endIcon={(
-            <SvgIcon fontSize="small">
-              <ArrowRightIcon />
-            </SvgIcon>
-          )}
-          size="small"
-        >
-          Overview
-        </Button>
       </CardActions>
     </Card>
   );
 };
 
-OverviewSales.protoTypes = {
+OverviewCalendar.protoTypes = {
   chartSeries: PropTypes.array.isRequired,
   sx: PropTypes.object
 };

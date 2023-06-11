@@ -11,33 +11,37 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 
-const states = [
+const department = [
   {
-    value: 'alabama',
-    label: 'Alabama'
+    value: 'it',
+    label: 'IT'
   },
   {
-    value: 'new-york',
-    label: 'New York'
+    value: 'prm',
+    label: 'PRM'
   },
   {
-    value: 'san-francisco',
-    label: 'San Francisco'
+    value: 'pro',
+    label: 'PRO'
   },
   {
-    value: 'los-angeles',
-    label: 'Los Angeles'
-  }
+    value: 're',
+    label: 'RE'
+  },
+  {
+    value: 'ri',
+    label: 'RI'
+  },
+
 ];
 
 export const AccountProfileDetails = () => {
   const [values, setValues] = useState({
-    firstName: 'Anika',
-    lastName: 'Visser',
-    email: 'demo@devias.io',
-    phone: '',
-    state: 'los-angeles',
-    country: 'USA'
+    firstName: 'Stefan',
+    lastName: 'Nistor',
+    email: 'stefannistor10@gmail.com',
+    phone: '0743144473',
+    department: 'ri',
   });
 
   const handleChange = useCallback(
@@ -133,28 +137,15 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Country"
-                  name="country"
-                  onChange={handleChange}
-                  required
-                  value={values.country}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Select State"
-                  name="state"
+                  label="Select Department"
+                  name="department"
                   onChange={handleChange}
                   required
                   select
                   SelectProps={{ native: true }}
                   value={values.state}
                 >
-                  {states.map((option) => (
+                  {department.map((option) => (
                     <option
                       key={option.value}
                       value={option.value}

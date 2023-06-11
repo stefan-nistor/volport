@@ -82,8 +82,8 @@ material-kit-react
 		├── _app.js
 		├── _document.js
 		├── account.js
-		├── companies.js
-		├── customers.js
+		├── projects.js
+		├── volunteers.js
 		├── index.js
 		├── products.js
 		└── settings.js

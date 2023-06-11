@@ -1,12 +1,10 @@
 import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
 import CogIcon from '@heroicons/react/24/solid/CogIcon';
-import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
-import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
-import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
+import { BriefcaseIcon } from '@heroicons/react/20/solid';
 
 export const items = [
   {
@@ -14,25 +12,34 @@ export const items = [
     path: '/',
     icon: (
       <SvgIcon fontSize="small">
-        <ChartBarIcon />
+        <ChartBarIcon/>
       </SvgIcon>
     )
   },
   {
-    title: 'Customers',
-    path: '/customers',
+    title: 'Volunteers',
+    path: '/volunteers',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <UsersIcon/>
       </SvgIcon>
     )
   },
   {
-    title: 'Companies',
-    path: '/companies',
+    title: 'Partners',
+    path: '/partners',
     icon: (
       <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
+        <BriefcaseIcon/>
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Projects',
+    path: '/projects',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ShoppingBagIcon/>
       </SvgIcon>
     )
   },
@@ -41,7 +48,7 @@ export const items = [
     path: '/account',
     icon: (
       <SvgIcon fontSize="small">
-        <UserIcon />
+        <UserIcon/>
       </SvgIcon>
     )
   },
@@ -50,34 +57,7 @@ export const items = [
     path: '/settings',
     icon: (
       <SvgIcon fontSize="small">
-        <CogIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Login',
-    path: '/auth/login',
-    icon: (
-      <SvgIcon fontSize="small">
-        <LockClosedIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Register',
-    path: '/auth/register',
-    icon: (
-      <SvgIcon fontSize="small">
-        <UserPlusIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Error',
-    path: '/404',
-    icon: (
-      <SvgIcon fontSize="small">
-        <XCircleIcon />
+        <CogIcon/>
       </SvgIcon>
     )
   }

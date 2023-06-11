@@ -7,8 +7,8 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { CustomersTable } from 'src/sections/customer/customers-table';
-import { CustomersSearch } from 'src/sections/customer/customers-search';
+import { VolunteerTable } from 'src/sections/volunteer/volunteer-table';
+import { VolunteerSearch } from 'src/sections/volunteer/volunteer-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 
 const now = new Date();
@@ -24,7 +24,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-carson-darrin.png',
     createdAt: subDays(subHours(now, 7), 1).getTime(),
-    email: 'carson.darrin@devias.io',
+    email: 'carson.darrin@volport.com',
     name: 'Carson Darrin',
     phone: '304-428-3097'
   },
@@ -38,7 +38,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-fran-perez.png',
     createdAt: subDays(subHours(now, 1), 2).getTime(),
-    email: 'fran.perez@devias.io',
+    email: 'fran.perez@volport.com',
     name: 'Fran Perez',
     phone: '712-351-5711'
   },
@@ -52,7 +52,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-jie-yan-song.png',
     createdAt: subDays(subHours(now, 4), 2).getTime(),
-    email: 'jie.yan.song@devias.io',
+    email: 'jie.yan.song@volport.com',
     name: 'Jie Yan Song',
     phone: '770-635-2682'
   },
@@ -66,7 +66,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-anika-visser.png',
     createdAt: subDays(subHours(now, 11), 2).getTime(),
-    email: 'anika.visser@devias.io',
+    email: 'anika.visser@volport.com',
     name: 'Anika Visser',
     phone: '908-691-3242'
   },
@@ -80,7 +80,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-miron-vitold.png',
     createdAt: subDays(subHours(now, 7), 3).getTime(),
-    email: 'miron.vitold@devias.io',
+    email: 'miron.vitold@volport.com',
     name: 'Miron Vitold',
     phone: '972-333-4106'
   },
@@ -94,7 +94,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-penjani-inyene.png',
     createdAt: subDays(subHours(now, 5), 4).getTime(),
-    email: 'penjani.inyene@devias.io',
+    email: 'penjani.inyene@volport.com',
     name: 'Penjani Inyene',
     phone: '858-602-3409'
   },
@@ -108,7 +108,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-omar-darboe.png',
     createdAt: subDays(subHours(now, 15), 4).getTime(),
-    email: 'omar.darobe@devias.io',
+    email: 'omar.darobe@volport.com',
     name: 'Omar Darobe',
     phone: '415-907-2647'
   },
@@ -122,7 +122,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-siegbert-gottfried.png',
     createdAt: subDays(subHours(now, 2), 5).getTime(),
-    email: 'siegbert.gottfried@devias.io',
+    email: 'siegbert.gottfried@volport.com',
     name: 'Siegbert Gottfried',
     phone: '702-661-1654'
   },
@@ -136,7 +136,7 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-iulia-albu.png',
     createdAt: subDays(subHours(now, 8), 6).getTime(),
-    email: 'iulia.albu@devias.io',
+    email: 'iulia.albu@volport.com',
     name: 'Iulia Albu',
     phone: '313-812-8947'
   },
@@ -150,13 +150,13 @@ const data = [
     },
     avatar: '/assets/avatars/avatar-nasimiyu-danai.png',
     createdAt: subDays(subHours(now, 1), 9).getTime(),
-    email: 'nasimiyu.danai@devias.io',
+    email: 'nasimiyu.danai@volport.com',
     name: 'Nasimiyu Danai',
     phone: '801-301-7894'
   }
 ];
 
-const useCustomers = (page, rowsPerPage) => {
+const useVolunteers = (page, rowsPerPage) => {
   return useMemo(
     () => {
       return applyPagination(data, page, rowsPerPage);
@@ -165,21 +165,21 @@ const useCustomers = (page, rowsPerPage) => {
   );
 };
 
-const useCustomerIds = (customers) => {
+const useVolunteerIds = (volunteer) => {
   return useMemo(
     () => {
-      return customers.map((customer) => customer.id);
+      return volunteer.map((volunteer) => volunteer.id);
     },
-    [customers]
+    [volunteer]
   );
 };
 
 const Page = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const customers = useCustomers(page, rowsPerPage);
-  const customersIds = useCustomerIds(customers);
-  const customersSelection = useSelection(customersIds);
+  const volunteers = useVolunteers(page, rowsPerPage);
+  const volunteersIds = useVolunteerIds(volunteers);
+  const volunteersSelection = useSelection(volunteersIds);
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -199,7 +199,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Customers | Devias Kit
+          Volunteers | Volport
         </title>
       </Head>
       <Box
@@ -218,7 +218,7 @@ const Page = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  Customers
+                  Volunteers
                 </Typography>
                 <Stack
                   alignItems="center"
@@ -260,19 +260,19 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            <CustomersSearch />
-            <CustomersTable
+            <VolunteerSearch />
+            <VolunteerTable
               count={data.length}
-              items={customers}
-              onDeselectAll={customersSelection.handleDeselectAll}
-              onDeselectOne={customersSelection.handleDeselectOne}
+              items={volunteers}
+              onDeselectAll={volunteersSelection.handleDeselectAll}
+              onDeselectOne={volunteersSelection.handleDeselectOne}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={customersSelection.handleSelectAll}
-              onSelectOne={customersSelection.handleSelectOne}
+              onSelectAll={volunteersSelection.handleSelectAll}
+              onSelectOne={volunteersSelection.handleSelectOne}
               page={page}
               rowsPerPage={rowsPerPage}
-              selected={customersSelection.selected}
+              selected={volunteersSelection.selected}
             />
           </Stack>
         </Container>

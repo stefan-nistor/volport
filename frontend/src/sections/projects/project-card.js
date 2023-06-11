@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ClockIcon from '@heroicons/react/24/solid/ClockIcon';
 import { Avatar, Box, Card, CardContent, Divider, Stack, SvgIcon, Typography } from '@mui/material';
+import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 
-export const CompanyCard = (props) => {
-  const { company } = props;
+export const ProjectCard = (props) => {
+  const { project } = props;
 
   return (
     <Card
@@ -23,7 +24,7 @@ export const CompanyCard = (props) => {
           }}
         >
           <Avatar
-            src={company.logo}
+            src={project.logo}
             variant="square"
           />
         </Box>
@@ -32,13 +33,13 @@ export const CompanyCard = (props) => {
           gutterBottom
           variant="h5"
         >
-          {company.title}
+          {project.title}
         </Typography>
         <Typography
           align="center"
           variant="body1"
         >
-          {company.description}
+          {project.description}
         </Typography>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
@@ -78,14 +79,14 @@ export const CompanyCard = (props) => {
             color="action"
             fontSize="small"
           >
-            <ArrowDownOnSquareIcon />
+            <UsersIcon />
           </SvgIcon>
           <Typography
             color="text.secondary"
             display="inline"
             variant="body2"
           >
-            {company.downloads} Downloads
+            {project.downloads} Volunteers
           </Typography>
         </Stack>
       </Stack>
@@ -93,6 +94,6 @@ export const CompanyCard = (props) => {
   );
 };
 
-CompanyCard.propTypes = {
-  company: PropTypes.object.isRequired
+ProjectCard.propTypes = {
+  project: PropTypes.object.isRequired
 };

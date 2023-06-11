@@ -24,7 +24,9 @@ const useChartOptions = (labels) => {
     colors: [
       theme.palette.primary.main,
       theme.palette.success.main,
-      theme.palette.warning.main
+      theme.palette.warning.main,
+      theme.palette.secondary.main,
+      theme.palette.info.main,
     ],
     dataLabels: {
       enabled: false
@@ -62,31 +64,15 @@ const useChartOptions = (labels) => {
   };
 };
 
-const iconMap = {
-  Desktop: (
-    <SvgIcon>
-      <ComputerDesktopIcon />
-    </SvgIcon>
-  ),
-  Tablet: (
-    <SvgIcon>
-      <DeviceTabletIcon />
-    </SvgIcon>
-  ),
-  Phone: (
-    <SvgIcon>
-      <PhoneIcon />
-    </SvgIcon>
-  )
-};
 
-export const OverviewTraffic = (props) => {
+
+export const OverviewDepartmentDistribution = (props) => {
   const { chartSeries, labels, sx } = props;
   const chartOptions = useChartOptions(labels);
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Traffic Source" />
+      <CardHeader title="Department Distribution" />
       <CardContent>
         <Chart
           height={300}
@@ -114,7 +100,6 @@ export const OverviewTraffic = (props) => {
                   alignItems: 'center'
                 }}
               >
-                {iconMap[label]}
                 <Typography
                   sx={{ my: 1 }}
                   variant="h6"
@@ -125,7 +110,7 @@ export const OverviewTraffic = (props) => {
                   color="text.secondary"
                   variant="subtitle2"
                 >
-                  {item}%
+                  {item}
                 </Typography>
               </Box>
             );
@@ -136,7 +121,7 @@ export const OverviewTraffic = (props) => {
   );
 };
 
-OverviewTraffic.propTypes = {
+OverviewDepartmentDistribution.propTypes = {
   chartSeries: PropTypes.array.isRequired,
   labels: PropTypes.array.isRequired,
   sx: PropTypes.object
