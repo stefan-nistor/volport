@@ -1,15 +1,28 @@
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container,
+  Dialog, DialogActions, DialogContent,
+  DialogTitle, FormControl, InputLabel, MenuItem, Select,
+  Stack,
+  SvgIcon, TextField,
+  Typography
+} from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { VolunteerTable } from 'src/sections/volunteer/volunteer-table';
 import { VolunteerSearch } from 'src/sections/volunteer/volunteer-search';
 import { applyPagination } from 'src/utils/apply-pagination';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import httpService from '../utils/http-client';
+import { API_URL } from '../constants/api';
 
 const now = new Date();
 
@@ -180,6 +193,37 @@ const Page = () => {
   const volunteers = useVolunteers(page, rowsPerPage);
   const volunteersIds = useVolunteerIds(volunteers);
   const volunteersSelection = useSelection(volunteersIds);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [department, setDepartment] = useState('');
+
+
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    department: '',
+  })
+
+  const handleAddButtonClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleSubmit = () => {
+    const postData = JSON.stringify(formData);
+    httpService.post('/api/volunteers',postData,{
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then((response) => {
+      if(response.ok) {
+        setIsDialogOpen(false)
+      }
+    })
+  }
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -229,7 +273,7 @@ const Page = () => {
                     color="inherit"
                     startIcon={(
                       <SvgIcon fontSize="small">
-                        <ArrowUpOnSquareIcon />
+                        <ArrowUpOnSquareIcon/>
                       </SvgIcon>
                     )}
                   >
@@ -239,7 +283,7 @@ const Page = () => {
                     color="inherit"
                     startIcon={(
                       <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
+                        <ArrowDownOnSquareIcon/>
                       </SvgIcon>
                     )}
                   >
@@ -251,16 +295,74 @@ const Page = () => {
                 <Button
                   startIcon={(
                     <SvgIcon fontSize="small">
-                      <PlusIcon />
+                      <PlusIcon/>
                     </SvgIcon>
                   )}
                   variant="contained"
+                  onClick={handleAddButtonClick}
                 >
                   Add
                 </Button>
               </div>
             </Stack>
-            <VolunteerSearch />
+            <Dialog
+              open={isDialogOpen} onClose={() => setIsDialogOpen(false)}
+            >
+              <DialogTitle>Add Volunteer</DialogTitle>
+              <DialogContent>
+                <Box>
+                  <TextField
+                    label="First Name"
+                    required={true}
+                    fullWidth
+                    sx={{ m: 1 }}
+                    value={formData.firstName}
+                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  />
+                  <TextField
+                    label="Last Name"
+                    fullWidth
+                    required={true}
+                    sx={{ m: 1 }}
+                    value={formData.lastName}
+                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  />
+                  <TextField
+                    label="Email Address"
+                    fullWidth
+                    required={true}
+                    sx={{ m: 1 }}
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                  <FormControl fullWidth sx={{ m: 1 }}>
+                    <InputLabel id="department-label">Department</InputLabel>
+                    <Select
+                      labelId="department-label"
+                      id="department"
+                      name="department"
+                      required={true}
+                      value={formData.department}
+                      onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                    >
+                      <MenuItem value="">Select Department</MenuItem>
+                      <MenuItem value="IT">IT</MenuItem>
+                      <MenuItem value="PRM">PR&M</MenuItem>
+                      <MenuItem value="PRO">PRO</MenuItem>
+                      <MenuItem value="RE">RE</MenuItem>
+                      <MenuItem value="RI">RI</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                <Button color="primary" variant="contained" onClick={(() => handleSubmit())}>
+                  Save
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <VolunteerSearch/>
             <VolunteerTable
               count={data.length}
               items={volunteers}

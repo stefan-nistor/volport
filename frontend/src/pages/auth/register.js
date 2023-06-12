@@ -46,11 +46,11 @@ const Page = () => {
         .email('Must be a valid email')
         .max(255)
         .required('Email is required'),
+      department: Yup.string().max(255).required('Department is required'),
       password: Yup
         .string()
         .max(255)
         .required('Password is required'),
-      department: Yup.string().max(255).required('Department is required'),
       confirmPassword: Yup.string()
                           .oneOf([Yup.ref('password'), null], 'Passwords must match')
                           .required('Confirm Password is required')
