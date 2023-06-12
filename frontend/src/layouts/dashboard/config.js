@@ -5,6 +5,7 @@ import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import { SvgIcon } from '@mui/material';
 import { BriefcaseIcon } from '@heroicons/react/20/solid';
+import ClockIcon from '@heroicons/react/24/solid/ClockIcon';
 
 export const items = [
   {
@@ -13,6 +14,15 @@ export const items = [
     icon: (
       <SvgIcon fontSize="small">
         <ChartBarIcon/>
+      </SvgIcon>
+    )
+  },
+  {
+  title: 'Timesheet',
+    path: '/timesheets',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ClockIcon/>
       </SvgIcon>
     )
   },

@@ -10,9 +10,12 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { VolunteerTable } from 'src/sections/volunteer/volunteer-table';
 import { VolunteerSearch } from 'src/sections/volunteer/volunteer-search';
 import { applyPagination } from 'src/utils/apply-pagination';
+import { PartnersSearch } from '../sections/partners/partners-search';
+import { PartnersTable } from '../sections/partners/partners-table';
 
 const now = new Date();
 
+// TODO: fetch data from API
 const data = [
   {
     id: '5e887ac47eed253091be10cb',
@@ -156,7 +159,7 @@ const data = [
   }
 ];
 
-const useVolunteers = (page, rowsPerPage) => {
+const usePartners = (page, rowsPerPage) => {
   return useMemo(
     () => {
       return applyPagination(data, page, rowsPerPage);
@@ -165,21 +168,21 @@ const useVolunteers = (page, rowsPerPage) => {
   );
 };
 
-const useVolunteerIds = (volunteer) => {
+const usePartnersIds = (partner) => {
   return useMemo(
     () => {
-      return volunteer.map((volunteer) => volunteer.id);
+      return partner.map((partner) => partner.id);
     },
-    [volunteer]
+    [partner]
   );
 };
 
 const Page = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const volunteers = useVolunteers(page, rowsPerPage);
-  const volunteersIds = useVolunteerIds(volunteers);
-  const volunteersSelection = useSelection(volunteersIds);
+  const partners = usePartners(page, rowsPerPage);
+  const partnersIds = usePartnersIds(partners);
+  const partnersSelection = useSelection(partnersIds);
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -260,19 +263,19 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            <VolunteerSearch />
-            <VolunteerTable
+            <PartnersSearch />
+            <PartnersTable
               count={data.length}
-              items={volunteers}
-              onDeselectAll={volunteersSelection.handleDeselectAll}
-              onDeselectOne={volunteersSelection.handleDeselectOne}
+              items={partners}
+              onDeselectAll={partnersSelection.handleDeselectAll}
+              onDeselectOne={partnersSelection.handleDeselectOne}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={volunteersSelection.handleSelectAll}
-              onSelectOne={volunteersSelection.handleSelectOne}
+              onSelectAll={partnersSelection.handleSelectAll}
+              onSelectOne={partnersSelection.handleSelectOne}
               page={page}
               rowsPerPage={rowsPerPage}
-              selected={volunteersSelection.selected}
+              selected={partnersSelection.selected}
             />
           </Stack>
         </Container>

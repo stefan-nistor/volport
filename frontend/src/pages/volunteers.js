@@ -8,10 +8,17 @@ import {
   Box,
   Button,
   Container,
-  Dialog, DialogActions, DialogContent,
-  DialogTitle, FormControl, InputLabel, MenuItem, Select,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
-  SvgIcon, TextField,
+  SvgIcon,
+  TextField,
   Typography
 } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
@@ -19,13 +26,11 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { VolunteerTable } from 'src/sections/volunteer/volunteer-table';
 import { VolunteerSearch } from 'src/sections/volunteer/volunteer-search';
 import { applyPagination } from 'src/utils/apply-pagination';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
 import httpService from '../utils/http-client';
-import { API_URL } from '../constants/api';
 
 const now = new Date();
 
+// TODO: Fetch data from API
 const data = [
   {
     id: '5e887ac47eed253091be10cb',
@@ -195,18 +200,13 @@ const Page = () => {
   const volunteersSelection = useSelection(volunteersIds);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [department, setDepartment] = useState('');
-
-
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    department: '',
-  })
+    phone: '',
+    department: ''
+  });
 
   const handleAddButtonClick = () => {
     setIsDialogOpen(true);
@@ -214,16 +214,16 @@ const Page = () => {
 
   const handleSubmit = () => {
     const postData = JSON.stringify(formData);
-    httpService.post('/api/volunteers',postData,{
-      headers:{
+    httpService.post('/api/volunteers', postData, {
+      headers: {
         'Content-Type': 'application/json'
       }
     }).then((response) => {
-      if(response.ok) {
-        setIsDialogOpen(false)
+      if (response.ok) {
+        setIsDialogOpen(false);
       }
-    })
-  }
+    });
+  };
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -334,6 +334,14 @@ const Page = () => {
                     sx={{ m: 1 }}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                  <TextField
+                    label="Phone number"
+                    fullWidth
+                    required={true}
+                    sx={{ m: 1 }}
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   />
                   <FormControl fullWidth sx={{ m: 1 }}>
                     <InputLabel id="department-label">Department</InputLabel>
