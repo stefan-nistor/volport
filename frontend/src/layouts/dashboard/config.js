@@ -19,7 +19,7 @@ export const items = [
   },
   {
   title: 'Timesheet',
-    path: '/timesheets',
+    path: '/timesheet',
     icon: (
       <SvgIcon fontSize="small">
         <ClockIcon/>
