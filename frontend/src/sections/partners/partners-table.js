@@ -1,127 +1,124 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
+import { format } from 'date-fns';
+import {
+  Box,
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TablePagination,
+  TableRow
+} from '@mui/material';
+import { Scrollbar } from 'src/components/scrollbar';
 
-function createData(name, calories, fat, carbs, protein, price) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
-  };
-}
-
-// TODO: resolve partner model issue with table
 export const PartnersTable = (props) => {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
+  const {
+    count = 0,
+    items = [],
+    onPageChange = () => {},
+    onRowsPerPageChange,
+    page = 0,
+    rowsPerPage = 0,
+    selected = []
+  } = props;
+
+  const [expandedRow, setExpandedRow] = useState(null);
+
+  const handleRowClick = (index) => {
+    setExpandedRow(index === expandedRow ? null : index);
+  };
 
   return (
-    <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          row.name
-        </TableCell>
-        <TableCell align="right">row.calories</TableCell>
-        <TableCell align="right">row.fat</TableCell>
-        <TableCell align="right">row.carbs</TableCell>
-        <TableCell align="right">row.protein</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                History
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
-                        {historyRow.date}
+    <Card>
+      <Scrollbar>
+        <Box sx={{ minWidth: 800 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  Name
+                </TableCell>
+                <TableCell>
+                  Contact
+                </TableCell>
+                <TableCell>
+                  Fiscal ID
+                </TableCell>
+                <TableCell>
+                  Bank
+                </TableCell>
+                <TableCell>
+                  Bank account
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {items.map((partner, index) => {
+                const isSelected = selected.includes(partner.id);
+                const createdAt = format(partner.createdAt, 'dd/MM/yyyy');
+
+                return (
+                  <React.Fragment key={partner.id}>
+                    <TableRow
+                      hover
+                      onClick={() => handleRowClick(index)}
+                      selected={isSelected}
+                    >
+                      <TableCell>
+                        {partner.name}
                       </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
+                      <TableCell>
+                        {partner.email}
+                      </TableCell>
+                      <TableCell>
+                        {partner.address.city}, {partner.address.state}, {partner.address.country}
+                      </TableCell>
+                      <TableCell>
+                        {partner.phone}
+                      </TableCell>
+                      <TableCell>
+                        {createdAt}
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
+                    {expandedRow === index && (
+                      <TableRow>
+                        <TableCell colSpan={5}>
+                          {partner.observations}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Box>
+      </Scrollbar>
+      <TablePagination
+        component="div"
+        count={count}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[5, 10, 25]}
+      />
+    </Card>
   );
-}
-
-PartnersTable.propTypes = {
-  row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-  }).isRequired,
 };
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-];
+PartnersTable.propTypes = {
+  count: PropTypes.number,
+  items: PropTypes.array,
+  onDeselectAll: PropTypes.func,
+  onDeselectOne: PropTypes.func,
+  onPageChange: PropTypes.func,
+  onRowsPerPageChange: PropTypes.func,
+  onSelectAll: PropTypes.func,
+  onSelectOne: PropTypes.func,
+  page: PropTypes.number,
+  rowsPerPage: PropTypes.number,
+  selected: PropTypes.array
+};

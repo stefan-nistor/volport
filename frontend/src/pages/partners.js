@@ -1,10 +1,19 @@
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Container, Dialog, DialogActions,
+  DialogContent,
+  DialogTitle, FormControl, InputLabel, MenuItem, Select,
+  Stack,
+  SvgIcon, TextField,
+  Typography
+} from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { VolunteerTable } from 'src/sections/volunteer/volunteer-table';
@@ -12,6 +21,7 @@ import { VolunteerSearch } from 'src/sections/volunteer/volunteer-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import { PartnersSearch } from '../sections/partners/partners-search';
 import { PartnersTable } from '../sections/partners/partners-table';
+import httpService from '../utils/http-client';
 
 const now = new Date();
 
@@ -183,6 +193,16 @@ const Page = () => {
   const partners = usePartners(page, rowsPerPage);
   const partnersIds = usePartnersIds(partners);
   const partnersSelection = useSelection(partnersIds);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    contact: '',
+    fiscalID: '',
+    bank: '',
+    bankAccount: '',
+    observations:''
+  });
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -197,6 +217,23 @@ const Page = () => {
     },
     []
   );
+
+  const handleAddButtonClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleSubmit = () => {
+    const postData = JSON.stringify(formData);
+    httpService.post('/api/partners', postData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((response) => {
+      if (response.ok) {
+        setIsDialogOpen(false);
+      }
+    });
+  };
 
   return (
     <>
@@ -258,11 +295,75 @@ const Page = () => {
                     </SvgIcon>
                   )}
                   variant="contained"
+                  onClick={handleAddButtonClick}
                 >
                   Add
                 </Button>
               </div>
             </Stack>
+            <Dialog
+              open={isDialogOpen} onClose={() => setIsDialogOpen(false)}
+            >
+              <DialogTitle>Add Partner</DialogTitle>
+              <DialogContent>
+                <Box>
+                  <TextField
+                    label="Name"
+                    required={true}
+                    fullWidth
+                    sx={{ m: 1 }}
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                  <TextField
+                    label="Contact"
+                    fullWidth
+                    required={true}
+                    sx={{ m: 1 }}
+                    value={formData.contact}
+                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                  />
+                  <TextField
+                    label="Fiscal ID"
+                    fullWidth
+                    required={true}
+                    sx={{ m: 1 }}
+                    value={formData.fiscalID}
+                    onChange={(e) => setFormData({ ...formData, fiscalID: e.target.value })}
+                  />
+                  <TextField
+                    label="Bank"
+                    fullWidth
+                    required={true}
+                    sx={{ m: 1 }}
+                    value={formData.bank}
+                    onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
+                  />
+                  <TextField
+                    label="Bank account"
+                    fullWidth
+                    required={true}
+                    sx={{ m: 1 }}
+                    value={formData.bankAccount}
+                    onChange={(e) => setFormData({ ...formData, bankAccount: e.target.value })}
+                  />
+                <TextField
+                    label="Observations"
+                    fullWidth
+                    required={false}
+                    sx={{ m: 1 }}
+                    value={formData.observations}
+                    onChange={(e) => setFormData({ ...formData, observations: e.target.value })}
+                  />
+                </Box>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                <Button color="primary" variant="contained" onClick={(() => handleSubmit())}>
+                  Save
+                </Button>
+              </DialogActions>
+            </Dialog>
             <PartnersSearch />
             <PartnersTable
               count={data.length}
