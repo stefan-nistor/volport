@@ -27,21 +27,12 @@ public class VolunteerController {
 
     @GetMapping
     public ResponseEntity<?> getAllVolunteers(){
-        LOGGER.info("GET /api/volunteer");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        var uid = authentication.getName();
-        LOGGER.info("User {} authenticated", uid);
         return  ResponseEntity.ok(volunteerService.getAllVolunteers());
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addVolunteer(@RequestBody VolunteerDTO volunteerDTO) {
         LOGGER.info("Requested POST on /api/volunteer with body {}", volunteerDTO);
-
-
-
-        volunteerDTO.setPassword(passwordEncoder.encode(volunteerDTO.getPassword()));
         volunteerService.addVolunteer(volunteerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

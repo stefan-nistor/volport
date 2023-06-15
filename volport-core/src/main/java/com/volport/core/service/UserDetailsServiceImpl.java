@@ -32,6 +32,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         var volunteer = volunteerEntity.get();
-        return new User(volunteer.getEmail(), volunteer.getPassword(), Collections.emptyList());
+        return new User(volunteer.getEmail(), "volunteer.getPassword()", Collections.emptyList());
     }
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Builder
@@ -21,9 +23,7 @@ public class Partner {
 
     private String name;
 
-//    @ManyToMany
-//    private List<Project> projects;
-
-    // TODO: create proper relationship between projects and partners
+    @ManyToMany(mappedBy = "partners")
+    private List<Project> projects;
 
 }

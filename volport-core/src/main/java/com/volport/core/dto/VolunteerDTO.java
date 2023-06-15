@@ -2,20 +2,25 @@ package com.volport.core.dto;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
-@Data
+/**
+ * DTO for {@link com.volport.core.model.Volunteer}
+ */
+@Value
 @Builder
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-public class VolunteerDTO {
-    private String id;
-    private String firstname;
-    private String lastname;
-    private String email;
-    private String department;;
-    private String password;
-    private LocalDate joinDate;
-    private boolean canVote;
+@NoArgsConstructor(force = true)
+public class VolunteerDTO implements Serializable {
+    Long id;
+    String firstname;
+    String lastname;
+    String email;
+    LocalDate joinDate;
+    boolean canVote;
+    DepartmentDTO department;
 
 }

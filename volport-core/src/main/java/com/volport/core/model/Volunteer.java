@@ -1,13 +1,14 @@
 package com.volport.core.model;
 
 import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,22 +21,20 @@ public class Volunteer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-//    @OneToMany
-//    @JoinColumn(name = "dept_id")
-//    private List<Department> departments;
-//    @OneToMany
-//    @JoinColumn(name = "project_id")
-//    private List<Project> projects;
-
-    private String department;
     private String firstname;
     private String lastname;
     private String email;
-    private String password;
     private LocalDate joinDate;
     private boolean canVote;
 
-    //TODO: link volunteer to project and department table
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dept_id")
+    private Department department;
+
+    @ManyToMany(mappedBy = "volunteers")
+    private List<Project> projects;
+
+    @ManyToMany(mappedBy = "volunteers")
+    private List<Task> tasks;
 
 }
