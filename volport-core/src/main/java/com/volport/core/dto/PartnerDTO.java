@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.Value;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * DTO for {@link com.volport.core.model.Partner}
@@ -16,5 +15,4 @@ import java.util.List;
 public class PartnerDTO implements Serializable {
     Long id;
     String name;
-    List<ProjectDTO> projects;
 }

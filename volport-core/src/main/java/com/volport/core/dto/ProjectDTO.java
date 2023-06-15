@@ -8,14 +8,15 @@ import java.util.List;
 /**
  * DTO for {@link com.volport.core.model.Project}
  */
+@Value
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class ProjectDTO implements Serializable {
     Long id;
     String name;
     String description;
-    private List<VolunteerDTO> volunteers;
-    private List<TaskDTO> tasks;
+    List<Long> volunteerIds;
+    List<Long> partnerIds;
 }
