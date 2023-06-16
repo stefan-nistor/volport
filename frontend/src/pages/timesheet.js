@@ -46,7 +46,7 @@ const data = [
     startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
     endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
     hours: 8,
-    status: 'approved'
+    status: 'pending'
   },
   {
     id: '5e887b7602bdbc4dbb234b27',
@@ -55,7 +55,7 @@ const data = [
     startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
     endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
     hours: 8,
-    status: 'approved'
+    status: 'declined'
   },
   {
     id: '5e86805e2bafd54f66cc95c3',

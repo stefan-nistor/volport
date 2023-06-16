@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
+import { SeverityPill } from '../../components/severity-pill';
 
 export const TimesheetTable = (props) => {
   const {
@@ -34,6 +35,12 @@ export const TimesheetTable = (props) => {
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
+
+  const statusMap = {
+    pending: 'warning',
+    approved: 'success',
+    declined: 'error'
+  };
 
   return (
     <Card>
@@ -88,7 +95,9 @@ export const TimesheetTable = (props) => {
                       {task.hours}
                     </TableCell>
                     <TableCell>
-                      {task.status}
+                      <SeverityPill color={statusMap[task.status]}>
+                        {task.status}
+                      </SeverityPill>
                     </TableCell>
                   </TableRow>
                 );

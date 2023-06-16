@@ -1,10 +1,7 @@
 import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
 import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { OverviewUpcomingEvents } from 'src/sections/overview/overview-upcoming-events';
-import { OverviewLatestOrders } from 'src/sections/overview/overview-latest-orders';
-import { OverviewLatestProducts } from 'src/sections/overview/overview-latest-products';
 import { OverviewCalendar } from 'src/sections/overview/overview-calendar';
 import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
 import { OverviewTotalVolunteers } from 'src/sections/overview/overview-total-volunteers';
@@ -38,9 +35,9 @@ const Page = () => (
             lg={3}
           >
             <OverviewUpcomingEvents
-              date="12 July 2023"
+              date="22 July 2023"
               sx={{ height: '100%' }}
-              value="AG"
+              value="Licenta"
             />
           </Grid>
           <Grid
