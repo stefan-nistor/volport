@@ -17,7 +17,7 @@ public class PartnerServiceImpl implements PartnerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PartnerServiceImpl.class);
 
     @Autowired
-    PartnerRepository partnerRepository;
+    private PartnerRepository partnerRepository;
 
     @Autowired
     private PartnerMapper partnerMapper;
