@@ -26,6 +26,11 @@ public class ProjectController {
         return ResponseEntity.ok().body(projectService.getById(id));
     }
 
+    @GetMapping("/{id}/volunteers")
+    public ResponseEntity<?> getVolunteersForProjectId(@PathVariable Long id) {
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping
     public ResponseEntity<?> addProject(@RequestBody ProjectDTO projectDTO) {
         var result  = projectService.saveProject(projectDTO);
