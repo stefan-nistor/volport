@@ -30,4 +30,8 @@ public class Department {
 
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Volunteer> volunteers;
+
+    @Column(name = "acronym")
+    private String acronym;
+
 }

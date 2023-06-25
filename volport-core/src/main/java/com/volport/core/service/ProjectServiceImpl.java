@@ -33,6 +33,7 @@ public class ProjectServiceImpl implements ProjectService {
                         .id(project.getId())
                         .name(project.getName())
                         .description(project.getDescription())
+                        .logo(project.getLogo())
                         .volunteerIds(project.getVolunteers().stream()
                                 .map(Volunteer::getId)
                                 .toList())
@@ -50,6 +51,11 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectAlreadyExistsException("Project name already exists");
         }
         return modelMapper.map(projectRepository.save(modelMapper.map(projectDTO, Project.class)), ProjectDTO.class);
+    }
+
+    @Override
+    public void saveProjectList(List<ProjectDTO> projectDTOList) {
+        projectDTOList.forEach(this::saveProject);
     }
 
 }

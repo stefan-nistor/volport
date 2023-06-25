@@ -10,4 +10,5 @@ public interface ProjectService {
 
     ProjectDTO saveProject(ProjectDTO projectDTO);
 
+    void saveProjectList(List<ProjectDTO> projectDTOList);
 }

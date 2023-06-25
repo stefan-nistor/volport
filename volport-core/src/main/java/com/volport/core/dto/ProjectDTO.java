@@ -1,6 +1,10 @@
 package com.volport.core.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.io.Serializable;
 import java.util.List;
@@ -17,6 +21,7 @@ public class ProjectDTO implements Serializable {
     Long id;
     String name;
     String description;
+    String logo;
     List<Long> volunteerIds;
     List<Long> partnerIds;
 }

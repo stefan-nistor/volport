@@ -48,4 +48,8 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "partner_id")
     )
     private List<Partner> partners;
+
+    @Column(name = "logo")
+    private String logo;
+
 }

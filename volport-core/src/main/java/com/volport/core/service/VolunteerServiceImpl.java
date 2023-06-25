@@ -74,7 +74,7 @@ public class VolunteerServiceImpl implements VolunteerService {
 
     @Override
     public void addVolunteerList(@NotNull List<VolunteerDTO> volunteerDTOS) {
-        volunteerDTOS.forEach(volunteerDTO -> volunteerRepository.save(modelMapper.map(volunteerDTO, Volunteer.class)));
+        volunteerDTOS.forEach(this::addVolunteer);
     }
 
     /**
