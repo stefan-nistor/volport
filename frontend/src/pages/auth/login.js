@@ -20,6 +20,7 @@ import GoogleIcon from 'src/icons/google';
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
+  const { user } = useAuth();
 
   const formik = useFormik({
     initialValues: {
@@ -40,8 +41,7 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        // await auth.signIn(values.email, values.password);
-        await auth.skip();
+        await auth.signIn(values.email, values.password);
         router.push('/');
       } catch (err) {
         helpers.setStatus({ success: false });
@@ -53,9 +53,15 @@ const Page = () => {
 
   const handleGoogle = async () => {
     try {
-      console.log('Handle google')
-      await auth.signInWithGoogle();
-      router.push('/');
+      console.log(`user: ${user}`)
+      if (!user.accessToken) {
+        console.log('Handle google');
+        await auth.signInWithGoogle();
+        console.log('After handle google');
+        router.push('/');
+      } else {
+        router.push('/');
+      }
     } catch (err) {
       helpers.setStatus({ success: false });
       helpers.setErrors({ submit: err.message });
@@ -95,21 +101,21 @@ const Page = () => {
               <Typography variant="h4">
                 Login
               </Typography>
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
-                Don&apos;t have an account?
-                &nbsp;
-                <Link
-                  component={NextLink}
-                  href="/auth/register"
-                  underline="hover"
-                  variant="subtitle2"
-                >
-                  Register
-                </Link>
-              </Typography>
+              {/*<Typography*/}
+              {/*  color="text.secondary"*/}
+              {/*  variant="body2"*/}
+              {/*>*/}
+              {/*  Don&apos;t have an account?*/}
+              {/*  &nbsp;*/}
+              {/*  <Link*/}
+              {/*    component={NextLink}*/}
+              {/*    href="/auth/register"*/}
+              {/*    underline="hover"*/}
+              {/*    variant="subtitle2"*/}
+              {/*  >*/}
+              {/*    Register*/}
+              {/*  </Link>*/}
+              {/*</Typography>*/}
             </Stack>
             <form
               noValidate
@@ -177,7 +183,7 @@ const Page = () => {
                   size="large"
                   variant="outlined"
                   startIcon={
-                    <GoogleIcon />
+                    <GoogleIcon/>
                   }
                 >
                   Google

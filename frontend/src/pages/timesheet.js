@@ -1,8 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { subDays } from 'date-fns';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import {
   Box,
@@ -31,49 +29,52 @@ const now = new Date();
 // TODO: Fetch data from API
 const data = [
   {
+    id: '5e887ac47eed253091be22cb',
+    project: 'LAN Party',
+    name: 'Contact Partners',
+    startDate: '16-06-2023',
+    endDate: '20-06-2023',
+    hours: 16
+  },
+  {
     id: '5e887ac47eed253091be10cb',
     project: 'FII Practic',
     name: 'Call Center',
-    startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    hours: 8,
-    status: 'approved'
+    startDate: '12-03-2023',
+    endDate: '13-03-2023',
+    hours: 2
   },
   {
     id: '5e887b209c28ac3dd97f6db5',
     project: 'FII Code',
     name: 'Mentor',
-    startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    hours: 8,
-    status: 'pending'
+    startDate: '8-01-2023',
+    endDate: '8-02-2023',
+    hours: 8
   },
   {
     id: '5e887b7602bdbc4dbb234b27',
     project: 'Balul de Caritate',
     name: 'Cor',
-    startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    hours: 8,
-    status: 'declined'
+    startDate: '26-11-2022',
+    endDate: '19-12-2022',
+    hours: 8
   },
   {
     id: '5e86805e2bafd54f66cc95c3',
     project: 'FII Practic',
     name: 'Mentor',
-    startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    hours: 8,
-    status: 'approved'
+    startDate: '03-03-2021',
+    endDate: '10-04-2021',
+    hours: 16
   },
   {
     id: '5e887a1fbefd7938eea9c981',
     project: 'FII IT-ist',
     name: 'Supervisior',
-    startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    hours: 8,
-    status: 'approved'
+    startDate: '06-11-2022',
+    endDate: '06-11-2022',
+    hours: 6
   },
   {
     id: '5e887d0b3d090c1b8f162003',
@@ -81,9 +82,8 @@ const data = [
     name: 'Tickets',
     startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
     endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    hours: 8,
-    status: 'approved'
-  },
+    hours: 8
+  }
 ];
 
 const useVolunteers = (page, rowsPerPage) => {
@@ -113,13 +113,13 @@ const Page = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [formData, setFormData] = useState({
-    projectName: '',
-    taskName: '',
+    project: '',
+    task: '',
     startDate: '',
     endDate: '',
     hours: '',
     // uuid of principal
-    doneBy:'',
+    doneBy: ''
   });
 
   const handleAddButtonClick = () => {
@@ -183,26 +183,6 @@ const Page = () => {
                   direction="row"
                   spacing={1}
                 >
-                  <Button
-                    color="inherit"
-                    startIcon={(
-                      <SvgIcon fontSize="small">
-                        <ArrowUpOnSquareIcon/>
-                      </SvgIcon>
-                    )}
-                  >
-                    Import
-                  </Button>
-                  <Button
-                    color="inherit"
-                    startIcon={(
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon/>
-                      </SvgIcon>
-                    )}
-                  >
-                    Export
-                  </Button>
                 </Stack>
               </Stack>
               <div>
@@ -230,7 +210,7 @@ const Page = () => {
                     required={true}
                     fullWidth
                     sx={{ m: 1 }}
-                    value={formData.projectName}
+                    value={formData.project}
                     onChange={(e) => setFormData({ ...formData, projectName: e.target.value })}
                   />
                   <TextField
@@ -238,34 +218,36 @@ const Page = () => {
                     fullWidth
                     required={true}
                     sx={{ m: 1 }}
-                    value={formData.taskName}
+                    value={formData.task}
                     onChange={(e) => setFormData({ ...formData, taskName: e.target.value })}
                   />
                   {
-                  //TODO: Fix alignment with date pickers
+                    //TODO: Fix alignment with date pickers
                   }
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      label="Start Date"
-                      required={true}
-                      fullWidth
-                      sx={{ m: 1 }}
-                      value={formData.startDate}
-                      onChange={(date) => setFormData({ ...formData, startDate: date })}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      label="End Date"
-                      required={true}
-                      fullWidth
-                      sx={{ m: 1 }}
-                      value={formData.endDate}
-                      onChange={(date) => setFormData({ ...formData, endDate: date })}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
+                  <Box sx={{ m: 1 }}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        label="Start Date"
+                        fullWidth
+                        sx={{ p: 1 }}
+                        value={new Date()}
+                        onChange={(date) => setFormData({ ...formData, startDate: date })}
+                        renderInput={(params) => <TextField {...params} />}
+                        inputFormat={'dd-MM-yyyy'}
+                      />
+                    </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        label="End Date"
+                        fullWidth
+                        sx={{ p: 1 }}
+                        value={new Date()}
+                        onChange={(date) => setFormData({ ...formData, endDate: date })}
+                        renderInput={(params) => <TextField {...params} />}
+                        inputFormat={'dd-MM-yyyy'}
+                      />
+                    </LocalizationProvider>
+                  </Box>
                   <TextField
                     label="Hours"
                     type="number"
@@ -282,7 +264,7 @@ const Page = () => {
                 <Button color="primary" variant="contained" onClick={(() => handleSubmit())}>
                   Save
                 </Button>
-              </DialogActions>
+              </DialogActions>;
             </Dialog>
             <TimesheetTable
               count={data.length}

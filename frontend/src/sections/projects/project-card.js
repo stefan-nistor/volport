@@ -3,6 +3,7 @@ import ClockIcon from '@heroicons/react/24/solid/ClockIcon';
 import { Avatar, Box, Card, CardContent, Divider, Stack, SvgIcon, Typography } from '@mui/material';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import Link from 'next/link';
+import { BriefcaseIcon } from '@heroicons/react/20/solid';
 
 export const ProjectCard = (props) => {
   const { project } = props;
@@ -62,14 +63,14 @@ export const ProjectCard = (props) => {
               color="action"
               fontSize="small"
             >
-              <ClockIcon />
+              <BriefcaseIcon />
             </SvgIcon>
             <Typography
               color="text.secondary"
               display="inline"
               variant="body2"
             >
-              Updated 2hr ago
+              {project.partners} Partners
             </Typography>
           </Stack>
           <Stack
@@ -88,7 +89,7 @@ export const ProjectCard = (props) => {
               display="inline"
               variant="body2"
             >
-              {project.downloads} Volunteers
+              {project.volunteers} Volunteers
             </Typography>
           </Stack>
         </Stack>

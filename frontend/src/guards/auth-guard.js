@@ -6,7 +6,7 @@ import { useAuthContext } from 'src/contexts/auth-context';
 export const AuthGuard = (props) => {
   const { children } = props;
   const router = useRouter();
-  const { isAuthenticated } = useAuthContext();
+  const { user } = useAuthContext();
   const ignore = useRef(false);
   const [checked, setChecked] = useState(false);
 
@@ -27,7 +27,8 @@ export const AuthGuard = (props) => {
 
       ignore.current = true;
 
-      if (!isAuthenticated) {
+      if (!user.email && !user.uid) {
+        console.log(user)
         console.log('Not authenticated, redirecting');
         router
           .replace({

@@ -24,53 +24,50 @@ const statusMap = {
   refunded: 'error'
 };
 
-export const OverviewLatestOrders = (props) => {
-  const { orders = [], sx } = props;
+export const OverviewOngoingTasks = (props) => {
+  const { tasks = [], sx } = props;
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Latest Orders" />
+      <CardHeader title="Ongoing Tasks" />
       <Scrollbar sx={{ flexGrow: 1 }}>
         <Box sx={{ minWidth: 800 }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  Order
+                  Volunteer
                 </TableCell>
                 <TableCell>
-                  Customer
+                  Project Name
+                </TableCell>
+                <TableCell>
+                  Task Name
                 </TableCell>
                 <TableCell sortDirection="desc">
-                  Date
-                </TableCell>
-                <TableCell>
-                  Status
+                  Start date
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order) => {
-                const createdAt = format(order.createdAt, 'dd/MM/yyyy');
-
+              {tasks.map((task) => {
+                const createdAt = format(task.createdAt, 'dd/MM/yyyy');
                 return (
                   <TableRow
                     hover
-                    key={order.id}
+                    key={task.id}
                   >
                     <TableCell>
-                      {order.ref}
+                      {task.customer.name}
                     </TableCell>
                     <TableCell>
-                      {order.customer.name}
+                      {task.project}
+                    </TableCell>
+                    <TableCell>
+                      {task.task}
                     </TableCell>
                     <TableCell>
                       {createdAt}
-                    </TableCell>
-                    <TableCell>
-                      <SeverityPill color={statusMap[order.status]}>
-                        {order.status}
-                      </SeverityPill>
                     </TableCell>
                   </TableRow>
                 );
@@ -98,7 +95,7 @@ export const OverviewLatestOrders = (props) => {
   );
 };
 
-OverviewLatestOrders.prototype = {
-  orders: PropTypes.array,
+OverviewOngoingTasks.prototype = {
+  tasks: PropTypes.array,
   sx: PropTypes.object
 };

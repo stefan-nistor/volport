@@ -57,8 +57,6 @@ export const PartnersTable = (props) => {
             <TableBody>
               {items.map((partner, index) => {
                 const isSelected = selected.includes(partner.id);
-                const createdAt = format(partner.createdAt, 'dd/MM/yyyy');
-
                 return (
                   <React.Fragment key={partner.id}>
                     <TableRow
@@ -70,16 +68,16 @@ export const PartnersTable = (props) => {
                         {partner.name}
                       </TableCell>
                       <TableCell>
-                        {partner.email}
+                        {partner.contact}
                       </TableCell>
                       <TableCell>
-                        {partner.address.city}, {partner.address.state}, {partner.address.country}
+                        {partner.fiscalID}
                       </TableCell>
                       <TableCell>
-                        {partner.phone}
+                        {partner.bank}
                       </TableCell>
                       <TableCell>
-                        {createdAt}
+                        {partner.bankAccount}
                       </TableCell>
                     </TableRow>
                     {expandedRow === index && (

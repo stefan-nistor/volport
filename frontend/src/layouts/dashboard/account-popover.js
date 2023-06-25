@@ -8,11 +8,12 @@ export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
   const auth = useAuth();
+  const {user} = useAuth();
 
   const handleSignOut = useCallback(
     () => {
       onClose?.();
-      auth.signOut();
+      auth.logout();
       router.push('/auth/login');
     },
     [onClose, auth, router]
@@ -42,7 +43,7 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-          Anika Visser
+          {user.name}
         </Typography>
       </Box>
       <Divider />

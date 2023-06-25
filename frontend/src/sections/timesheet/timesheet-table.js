@@ -64,9 +64,9 @@ export const TimesheetTable = (props) => {
                 <TableCell>
                   Hours
                 </TableCell>
-                <TableCell>
-                  Status
-                </TableCell>
+                {/*<TableCell>*/}
+                {/*  Status*/}
+                {/*</TableCell>*/}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -94,11 +94,11 @@ export const TimesheetTable = (props) => {
                     <TableCell>
                       {task.hours}
                     </TableCell>
-                    <TableCell>
-                      <SeverityPill color={statusMap[task.status]}>
-                        {task.status}
-                      </SeverityPill>
-                    </TableCell>
+                    {/*<TableCell>*/}
+                    {/*  <SeverityPill color={statusMap[task.status]}>*/}
+                    {/*    {task.status}*/}
+                    {/*  </SeverityPill>*/}
+                    {/*</TableCell>*/}
                   </TableRow>
                 );
               })}

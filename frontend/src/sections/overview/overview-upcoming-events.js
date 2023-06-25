@@ -19,7 +19,7 @@ export const OverviewUpcomingEvents = (props) => {
               color="text.secondary"
               variant="overline"
             >
-              Upcoming events
+              Next deadline
             </Typography>
             <Typography variant="h4">
               {value}

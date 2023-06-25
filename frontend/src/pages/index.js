@@ -2,110 +2,134 @@ import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { OverviewUpcomingEvents } from 'src/sections/overview/overview-upcoming-events';
-import { OverviewCalendar } from 'src/sections/overview/overview-calendar';
 import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
 import { OverviewTotalVolunteers } from 'src/sections/overview/overview-total-volunteers';
 import { OverviewTotalPartners } from 'src/sections/overview/overview-total-partners';
 import { OverviewDepartmentDistribution } from 'src/sections/overview/overview-department-distribution';
+import httpService from '../utils/http-client';
+import { useAuth } from '../hooks/use-auth';
+import { useState } from 'react';
+import { OverviewOngoingTasks } from '../sections/overview/overview-ongoing-tasks';
+import { PARTNERS, TASKS, VOLUNTEERS } from '../constants/api';
+import { countVolunteersByDepartment } from '../utils/get-dept-size';
 
 const now = new Date();
 
-const Page = () => (
-  <>
-    <Head>
-      <title>
-        Overview | Volport
-      </title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
-    >
-      <Container maxWidth="xl">
-        <Grid
-          container
-          spacing={3}
-        >
+
+const Page = () => {
+
+  const { user } = useAuth();
+  let [partners, setPartners] = useState([]);
+
+  const fetchPartners = async () => {
+    try{
+      const { data } = await httpService.get('/partners', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      console.log(data);
+      } catch(error){
+      console.log('Error fetching partners: ', error)
+    }
+  };
+
+  return (
+    <>
+      <Head>
+        <title>
+          Overview | Volport
+        </title>
+      </Head>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8
+        }}
+      >
+        <Container maxWidth="xl">
           <Grid
-            xs={12}
-            sm={6}
-            lg={3}
+            container
+            spacing={3}
           >
-            <OverviewUpcomingEvents
-              date="22 July 2023"
-              sx={{ height: '100%' }}
-              value="Licenta"
-            />
+            <Grid
+              xs={12}
+              sm={6}
+              lg={3}
+            >
+              <OverviewUpcomingEvents
+                date=""
+                sx={{ height: '100%' }}
+                value="None"
+              />
+            </Grid>
+            <Grid
+              xs={12}
+              sm={6}
+              lg={3}
+            >
+              <OverviewTotalVolunteers
+                difference={16}
+                positive={false}
+                sx={{ height: '100%' }}
+                value={VOLUNTEERS.length}
+              />
+            </Grid>
+            <Grid
+              xs={12}
+              sm={6}
+              lg={3}
+            >
+              <OverviewTasksProgress
+                sx={{ height: '100%' }}
+                value={75.5}
+              />
+            </Grid>
+            <Grid
+              xs={12}
+              sm={6}
+              lg={3}
+            >
+              <OverviewTotalPartners
+                sx={{ height: '100%' }}
+                value={PARTNERS.length}
+              />
+            </Grid>
+            <Grid
+              xs={12}
+              lg={8}
+            >
+            {/* place list of my tasks*/}
+              <OverviewOngoingTasks
+                tasks={TASKS}
+                sx={{height:'100%'}}
+              />
+
+            </Grid>
+            <Grid
+              xs={12}
+              md={6}
+              lg={4}
+            >
+              <OverviewDepartmentDistribution
+                chartSeries={[
+                  countVolunteersByDepartment(VOLUNTEERS, 'IT'),
+                  countVolunteersByDepartment(VOLUNTEERS, 'PR&M'),
+                  countVolunteersByDepartment(VOLUNTEERS, 'Proiecte'),
+                  countVolunteersByDepartment(VOLUNTEERS, 'Relații interne'),
+                  countVolunteersByDepartment(VOLUNTEERS, 'Relații externe')
+                ]}
+                labels={['IT', 'PR&M', 'PRO', 'RI', 'RE']}
+                sx={{ height: '100%' }}
+              />
+            </Grid>
           </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewTotalVolunteers
-              difference={16}
-              positive={false}
-              sx={{ height: '100%' }}
-              value="1.6k"
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewTasksProgress
-              sx={{ height: '100%' }}
-              value={75.5}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewTotalPartners
-              sx={{ height: '100%' }}
-              value="15"
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            lg={8}
-          >
-            <OverviewCalendar
-              chartSeries={[
-                {
-                  name: 'This year',
-                  data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20]
-                },
-                {
-                  name: 'Last year',
-                  data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13]
-                }
-              ]}
-              sx={{ height: '100%' }}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            md={6}
-            lg={4}
-          >
-            <OverviewDepartmentDistribution
-              chartSeries={[63, 15, 22, 19, 30]}
-              labels={['IT', 'PRM', 'PRO', 'RI', 'RE']}
-              sx={{ height: '100%' }}
-            />
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
-  </>
-);
+        </Container>
+      </Box>
+    </>
+  );
+};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

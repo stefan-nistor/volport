@@ -16,54 +16,60 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { ProjectCard } from 'src/sections/projects/project-card';
 import { ProjectsSearch } from 'src/sections/projects/projects-search';
 
-const projects = [
+export const projects = [
   {
     id: '2569ce0d517a7f06d3ea1f24',
     createdAt: '27/03/2019',
     description: 'Locul în care inveți alături de oameni pasionați, unde reușești sa manuiești tehnologii actuale si sa îți dezvolți abilitați noi. Într-un cuvânt FII Practic reprezintă DEZVOLTARE!',
     logo: '/assets/logos/logo-fp.png',
     title: 'FII Practic',
-    downloads: '594'
+    volunteers: '36',
+    partners:'22'
   },
   {
     id: 'ed2b900870ceba72d203ec15',
     createdAt: '31/03/2019',
-    description: 'Medium is an online publishing platform developed by Evan Williams, and launched in August 2012.',
-    logo: '/assets/logos/logo-medium.png',
-    title: 'Medium Corporation',
-    downloads: '625'
+    description: 'FII Code este un concurs la nivel național pentru elevi și studenți în care aceștia își pot etala cunoștințele în algoritmică, tehnologii web si mobile.',
+    logo: '/assets/logos/logo-fc.webp',
+    title: 'FII Code',
+    volunteers: '28',
+    partners:'19'
   },
   {
     id: 'a033e38768c82fca90df3db7',
     createdAt: '03/04/2019',
-    description: 'Slack is a cloud-based set of team collaboration tools and services, founded by Stewart Butterfield.',
-    logo: '/assets/logos/logo-slack.png',
-    title: 'Slack',
-    downloads: '857'
+    description: 'Evenimentul aduce in fata voastra specialisti cu impact foarte relevant in industria IT din Iasi.',
+    logo: '/assets/logos/logo-fiiitist.webp',
+    title: 'FII IT-ist',
+    volunteers: '22',
+    partners: '11',
   },
   {
     id: '1efecb2bf6a51def9869ab0f',
     createdAt: '04/04/2019',
-    description: 'Lyft is an on-demand transportation company based in San Francisco, California.',
-    logo: '/assets/logos/logo-lyft.png',
-    title: 'Lyft',
-    downloads: '406'
+    description: 'Eveniment caritabil organizat de studenţi pentru a fi alături de cei care au nevoie. Ne place sa aducem zâmbetul pe buze, să citim fericirea în ochii unui copil, să aducem spiritul sărbătorilor in sufletele tuturor.',
+    logo: '/assets/logos/logo-bc.webp',
+    title: 'Balul de Caritate',
+    volunteers: '42',
+    partners:'5',
   },
   {
     id: '1ed68149f65fbc6089b5fd07',
     createdAt: '04/04/2019',
-    description: 'GitHub is a web-based hosting service for version control of code using Git.',
-    logo: '/assets/logos/logo-github.png',
-    title: 'GitHub',
-    downloads: '835'
+    description: 'Pentru că, pe an ce trece, bobocii FII sunt din ce în ce mai talentați și mai frumoși, organizăm in cinstea lor Balul Bobocilor, o petrecere tematică al cărei principal punct de interes este concursul Miss/Mister Boboc.',
+    logo: '',
+    title: 'Balul Bobocilor',
+    volunteers: '19',
+    partners: '4'
   },
   {
     id: '5dab321376eff6177407e887',
     createdAt: '04/04/2019',
-    description: 'Squarespace provides software as a service for website building and hosting. Headquartered in NYC.',
-    logo: '/assets/logos/logo-squarespace.png',
-    title: 'Squarespace',
-    downloads: '835'
+    description: 'Este o competiție de jocuri in rețea, organizată in fiecare primăvară pentru studenții FII. Pentru câteva zile, laboratoarele sunt cadrul în care toată lumea se distrează, se relaxează și interacționează.',
+    logo: '/assets/logos/logo-lanparty.webp',
+    title: 'LAN Party',
+    volunteers: '17',
+    partners: '3'
   }
 ];
 
@@ -96,28 +102,7 @@ const Page = () => (
                 alignItems="center"
                 direction="row"
                 spacing={1}
-              >
-                <Button
-                  color="inherit"
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <ArrowUpOnSquareIcon/>
-                    </SvgIcon>
-                  )}
-                >
-                  Import
-                </Button>
-                <Button
-                  color="inherit"
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <ArrowDownOnSquareIcon/>
-                    </SvgIcon>
-                  )}
-                >
-                  Export
-                </Button>
-              </Stack>
+              ></Stack>
             </Stack>
             <div>
               <Button

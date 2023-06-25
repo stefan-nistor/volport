@@ -1,177 +1,66 @@
-import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-
-const HANDLERS = {
-  INITIALIZE: 'INITIALIZE',
-  SIGN_IN: 'SIGN_IN',
-  SIGN_OUT: 'SIGN_OUT'
-};
-
-const initialState = {
-  isAuthenticated: false,
-  isLoading: true,
-  user: null
-};
-
-const handlers = {
-  [HANDLERS.INITIALIZE]: (state, action) => {
-    const user = action.payload;
-
-    return {
-      ...state,
-      ...(
-        // if payload (user) is provided, then is authenticated
-        user
-          ? ({
-            isAuthenticated: true,
-            isLoading: false,
-            user
-          })
-          : ({
-            isLoading: false
-          })
-      )
-    };
-  },
-  [HANDLERS.SIGN_IN]: (state, action) => {
-    const user = action.payload;
-
-    return {
-      ...state,
-      isAuthenticated: true,
-      user
-    };
-  },
-  [HANDLERS.SIGN_OUT]: (state) => {
-    return {
-      ...state,
-      isAuthenticated: false,
-      user: null
-    };
-  }
-};
-
-const reducer = (state, action) => (
-  handlers[action.type] ? handlers[action.type](state, action) : state
-);
-
-// The role of this context is to propagate authentication state through the App tree.
+import {
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider
+} from '@firebase/auth';
+import { auth } from 'src/utils/firebase';
+import httpService from 'src/utils/http-client';
 
 export const AuthContext = createContext({ undefined });
 
-export const AuthProvider = (props) => {
-  const { children } = props;
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const initialized = useRef(false);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState({ email: null, uid: null, accessToken: null, profile: null, name: null, photo: null });
+  const [loading, setLoading] = useState(true);
 
-  const initialize = async () => {
-    // Prevent from calling twice in development mode with React.StrictMode enabled
-    if (initialized.current) {
-      return;
-    }
-
-    initialized.current = true;
-
-    let isAuthenticated = false;
-
-    try {
-      isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
-    } catch (err) {
-      console.error(err);
-    }
-
-    if (isAuthenticated) {
-      const user = {
-        id: '5e86809283e28b96d2d38537',
-        avatar: '/assets/avatars/avatar-anika-visser.png',
-        name: 'Anika Visser',
-        email: 'anika.visser@devias.io'
-      };
-
-      dispatch({
-        type: HANDLERS.INITIALIZE,
-        payload: user
-      });
-    } else {
-      dispatch({
-        type: HANDLERS.INITIALIZE
-      });
-    }
-  };
-
-  useEffect(
-    () => {
-      initialize();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
-  const skip = () => {
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log("token:", user.accessToken)
+        setUser({ email: user.email, uid: user.uid, accessToken: user.accessToken, name: user.displayName, photo: user.photoURL });
+      } else {
+        setUser({ email: null, uid: null, accessToken: null });
+      }
+      console.log(user);
     });
-  };
 
-  const signIn = async (email, password) => {
-    if (email !== 'test@mail.com' || password !== 'password') {
-      throw new Error('Please check your email and password');
-    }
+    setLoading(false);
+    return () => unsubscribe();
+  },[]);
 
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
+  const signUp = (email, password) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  }
 
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
+  const signIn = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
 
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
-  };
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, new GoogleAuthProvider());
+  }
 
-  const signUp = async (email, name, password) => {
-    throw new Error('Sign up is not implemented');
-  };
-
-  const signOut = () => {
-    dispatch({
-      type: HANDLERS.SIGN_OUT
-    });
-  };
+  const logout = () => {
+    setUser({ email: null, uid: null, accessToken: null });
+    return signOut(auth);
+  }
 
   return (
     <AuthContext.Provider
       value={{
-        ...state,
-        skip,
-        signIn,
+        user,
         signUp,
-        signOut
+        signIn,
+        logout,
+        signInWithGoogle,
       }}
     >
-      {children}
+      { loading ? null : children }
     </AuthContext.Provider>
   );
 };
