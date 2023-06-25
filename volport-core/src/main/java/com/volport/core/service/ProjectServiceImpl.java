@@ -2,6 +2,7 @@ package com.volport.core.service;
 
 import com.volport.core.dto.ProjectDTO;
 import com.volport.core.exceptions.ProjectAlreadyExistsException;
+import com.volport.core.exceptions.ProjectNotFoundException;
 import com.volport.core.model.Partner;
 import com.volport.core.model.Project;
 import com.volport.core.model.Volunteer;
@@ -42,6 +43,23 @@ public class ProjectServiceImpl implements ProjectService {
                                 .toList())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public ProjectDTO getById(Long id) {
+        var project = projectRepository.findById(id).orElseThrow(() -> new ProjectNotFoundException("No such project for given id"));
+        return ProjectDTO.builder()
+                .id(project.getId())
+                .name(project.getName())
+                .description(project.getDescription())
+                .logo(project.getLogo())
+                .volunteerIds(project.getVolunteers().stream()
+                        .map(Volunteer::getId)
+                        .toList())
+                .partnerIds(project.getPartners().stream()
+                        .map(Partner::getId)
+                        .toList())
+                .build();
     }
 
     @Override
