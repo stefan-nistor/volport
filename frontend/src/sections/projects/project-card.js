@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import ClockIcon from '@heroicons/react/24/solid/ClockIcon';
 import { Avatar, Box, Card, CardContent, Divider, Stack, SvgIcon, Typography } from '@mui/material';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import Link from 'next/link';
@@ -36,7 +35,7 @@ export const ProjectCard = (props) => {
             gutterBottom
             variant="h5"
           >
-            {project.title}
+            {project.name}
           </Typography>
           <Typography
             align="center"

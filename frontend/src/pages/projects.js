@@ -15,6 +15,9 @@ import {
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { ProjectCard } from 'src/sections/projects/project-card';
 import { ProjectsSearch } from 'src/sections/projects/projects-search';
+import { useAuth } from '../hooks/use-auth';
+import { useEffect, useState } from 'react';
+import httpService from '../utils/http-client';
 
 export const projects = [
   {
@@ -24,7 +27,7 @@ export const projects = [
     logo: '/assets/logos/logo-fp.png',
     title: 'FII Practic',
     volunteers: '36',
-    partners:'22'
+    partners: '22'
   },
   {
     id: 'ed2b900870ceba72d203ec15',
@@ -33,7 +36,7 @@ export const projects = [
     logo: '/assets/logos/logo-fc.webp',
     title: 'FII Code',
     volunteers: '28',
-    partners:'19'
+    partners: '19'
   },
   {
     id: 'a033e38768c82fca90df3db7',
@@ -42,7 +45,7 @@ export const projects = [
     logo: '/assets/logos/logo-fiiitist.webp',
     title: 'FII IT-ist',
     volunteers: '22',
-    partners: '11',
+    partners: '11'
   },
   {
     id: '1efecb2bf6a51def9869ab0f',
@@ -51,7 +54,7 @@ export const projects = [
     logo: '/assets/logos/logo-bc.webp',
     title: 'Balul de Caritate',
     volunteers: '42',
-    partners:'5',
+    partners: '5'
   },
   {
     id: '1ed68149f65fbc6089b5fd07',
@@ -73,82 +76,108 @@ export const projects = [
   }
 ];
 
-const Page = () => (
-  <>
-    <Head>
-      <title>
-        Projects | Volport
-      </title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
-    >
-      <Container maxWidth="xl">
-        <Stack spacing={3}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            spacing={4}
-          >
-            <Stack spacing={1}>
-              <Typography variant="h4">
-                Projects
-              </Typography>
-              <Stack
-                alignItems="center"
-                direction="row"
-                spacing={1}
-              ></Stack>
+const Page = () => {
+  const { user } = useAuth();
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const { data } = await httpService.get('/api/project', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+
+      console.log(data);
+      setProjects(data);
+      setLoading(false);
+    } catch (error) {
+      console.log(`Error at fetching projects: ${error}`);
+    }
+  };
+
+  return loading ? (<></>) : (
+    <>
+      <Head>
+        <title>
+          Projects | Volport
+        </title>
+      </Head>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8
+        }}
+      >
+        <Container maxWidth="xl">
+          <Stack spacing={3}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              spacing={4}
+            >
+              <Stack spacing={1}>
+                <Typography variant="h4">
+                  Projects
+                </Typography>
+                <Stack
+                  alignItems="center"
+                  direction="row"
+                  spacing={1}
+                ></Stack>
+              </Stack>
+              <div>
+                <Button
+                  startIcon={(
+                    <SvgIcon fontSize="small">
+                      <PlusIcon/>
+                    </SvgIcon>
+                  )}
+                  variant="contained"
+                >
+                  Add
+                </Button>
+              </div>
             </Stack>
-            <div>
-              <Button
-                startIcon={(
-                  <SvgIcon fontSize="small">
-                    <PlusIcon/>
-                  </SvgIcon>
-                )}
-                variant="contained"
-              >
-                Add
-              </Button>
-            </div>
+            <ProjectsSearch/>
+            <Grid
+              container
+              spacing={3}
+            >
+              {projects.map((project) => (
+                <Grid
+                  xs={12}
+                  md={6}
+                  lg={4}
+                  key={project.id}
+                >
+                  <ProjectCard project={project}/>
+                </Grid>
+              ))}
+            </Grid>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
+              <Pagination
+                count={3}
+                size="small"
+              />
+            </Box>
           </Stack>
-          <ProjectsSearch/>
-          <Grid
-            container
-            spacing={3}
-          >
-            {projects.map((project) => (
-              <Grid
-                xs={12}
-                md={6}
-                lg={4}
-                key={project.id}
-              >
-                <ProjectCard project={project}/>
-              </Grid>
-            ))}
-          </Grid>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center'
-            }}
-          >
-            <Pagination
-              count={3}
-              size="small"
-            />
-          </Box>
-        </Stack>
-      </Container>
-    </Box>
-  </>
-);
+        </Container>
+      </Box>
+    </>
+  );
+};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

@@ -22,7 +22,6 @@ import { applyPagination } from 'src/utils/apply-pagination';
 import { PartnersSearch } from '../sections/partners/partners-search';
 import { PartnersTable } from '../sections/partners/partners-table';
 import httpService from '../utils/http-client';
-import { PARTNERS } from '../constants/api';
 import { faker } from '@faker-js/faker';
 import { useAuth } from '../hooks/use-auth';
 
@@ -54,7 +53,7 @@ function generateVolunteers(numVolunteers) {
 }
 
 // TODO: fetch data from API
-const data = PARTNERS;
+const data = []
 
 const usePartners = (page, rowsPerPage) => {
   return useMemo(
