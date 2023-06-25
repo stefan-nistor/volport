@@ -36,4 +36,9 @@ public class PartnerServiceImpl implements PartnerService {
         }
         return partnerMapper.toDto(partnerRepository.save(partnerMapper.toEntity(partnerDTO)));
     }
+
+    @Override
+    public void addPartnerList(List<PartnerDTO> partnerDTOList) {
+        partnerDTOList.forEach(partnerDTO -> partnerRepository.save(partnerMapper.toEntity(partnerDTO)));
+    }
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/partner")
 public class PartnerController {
@@ -30,5 +32,11 @@ public class PartnerController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @PostMapping("/partners")
+    public ResponseEntity<?> addPartnerList(@RequestBody List<PartnerDTO> partnerDTOList){
+        partnerService.addPartnerList(partnerDTOList);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

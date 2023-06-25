@@ -9,7 +9,7 @@ import {
   TableCell,
   TableHead,
   TablePagination,
-  TableRow
+  TableRow, TableSortLabel
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 
@@ -25,10 +25,42 @@ export const PartnersTable = (props) => {
   } = props;
 
   const [expandedRow, setExpandedRow] = useState(null);
+  const [sortColumn, setSortColumn] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
 
   const handleRowClick = (index) => {
     setExpandedRow(index === expandedRow ? null : index);
   };
+
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const sortedItems = items.sort((a, b) => {
+    const valueA = a[sortColumn];
+    const valueB = b[sortColumn];
+    if (valueA < valueB) {
+      return sortOrder === 'asc' ? -1 : 1;
+    }
+    if (valueA > valueB) {
+      return sortOrder === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const isSortColumnActive = (column) => column === sortColumn;
+  const getSortDirection = (column) => {
+    if (isSortColumnActive(column)) {
+      return sortOrder;
+    }
+    return 'asc';
+  };
+
 
   return (
     <Card>
@@ -38,24 +70,54 @@ export const PartnersTable = (props) => {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  Name
+                  <TableSortLabel
+                    active={isSortColumnActive('name')}
+                    direction={getSortDirection('name')}
+                    onClick={() => handleSort('name')}
+                  >
+                    Name
+                  </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  Contact
+                  <TableSortLabel
+                    active={isSortColumnActive('contact')}
+                    direction={getSortDirection('contact')}
+                    onClick={() => handleSort('contact')}
+                  >
+                    Contact
+                  </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  Fiscal ID
+                  <TableSortLabel
+                    active={isSortColumnActive('fiscalID')}
+                    direction={getSortDirection('fiscalID')}
+                    onClick={() => handleSort('fiscalID')}
+                  >
+                    Fiscal ID
+                  </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  Bank
+                  <TableSortLabel
+                    active={isSortColumnActive('bank')}
+                    direction={getSortDirection('bank')}
+                    onClick={() => handleSort('bank')}
+                  >
+                    Bank
+                  </TableSortLabel>
                 </TableCell>
                 <TableCell>
-                  Bank account
+                  <TableSortLabel
+                    active={isSortColumnActive('bankAccount')}
+                    direction={getSortDirection('bankAccount')}
+                    onClick={() => handleSort('bankAccount')}
+                  >
+                    Bank account
+                  </TableSortLabel>
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((partner, index) => {
+              {sortedItems.map((partner, index) => {
                 const isSelected = selected.includes(partner.id);
                 return (
                   <React.Fragment key={partner.id}>
@@ -94,15 +156,6 @@ export const PartnersTable = (props) => {
           </Table>
         </Box>
       </Scrollbar>
-      <TablePagination
-        component="div"
-        count={count}
-        onPageChange={onPageChange}
-        onRowsPerPageChange={onRowsPerPageChange}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
     </Card>
   );
 };

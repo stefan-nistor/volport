@@ -72,6 +72,11 @@ public class VolunteerServiceImpl implements VolunteerService {
         return modelMapper.map(volunteerRepository.save(modelMapper.map(volunteerDTO, Volunteer.class)), VolunteerDTO.class);
     }
 
+    @Override
+    public void addVolunteerList(@NotNull List<VolunteerDTO> volunteerDTOS) {
+        volunteerDTOS.forEach(volunteerDTO -> volunteerRepository.save(modelMapper.map(volunteerDTO, Volunteer.class)));
+    }
+
     /**
      * Update a volunteer.
      *

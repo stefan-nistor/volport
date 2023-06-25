@@ -22,6 +22,8 @@ public interface VolunteerService {
      */
     VolunteerDTO addVolunteer(VolunteerDTO volunteerDTO);
 
+    void addVolunteerList(List<VolunteerDTO> volunteerDTOS);
+
     /**
      * Update a volunteer
      *

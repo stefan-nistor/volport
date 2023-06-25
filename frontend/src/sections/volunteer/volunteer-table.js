@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Avatar,
   Box,
-  Card,
+  Card, IconButton,
   Stack,
   Table,
   TableBody,
@@ -16,6 +16,8 @@ import {
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { DEPARTMENTS } from 'src/constants/api';
+import { XCircleIcon } from '@heroicons/react/24/solid';
+import { BriefcaseIcon } from '@heroicons/react/20/solid';
 
 export const VolunteerTable = (props) => {
   const {
@@ -24,8 +26,8 @@ export const VolunteerTable = (props) => {
     selected = []
   } = props;
 
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortColumn, setSortColumn] = useState('joinDate');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const handleSort = (column) => {
     if (sortColumn === column) {
@@ -52,6 +54,11 @@ export const VolunteerTable = (props) => {
     }
     return items;
   }, [items, sortColumn, sortOrder]);
+
+  const handleDelete = (volunteerId) => {
+    // Implement the delete operation here using the volunteerId
+    // Update the state or make an API call to remove the volunteer from the list
+  };
 
   return (
     <Card>

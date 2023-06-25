@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/volunteer")
 public class VolunteerController {
@@ -34,7 +36,13 @@ public class VolunteerController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addVolunteer(@RequestBody VolunteerDTO volunteerDTO) {
         LOGGER.info("Requested POST on /api/volunteer with body {}", volunteerDTO);
-        volunteerService.addVolunteer(volunteerDTO);
+        var result = volunteerService.addVolunteer(volunteerDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @PostMapping("/volunteers")
+    public ResponseEntity<?> addVolunteerList(@RequestBody List<VolunteerDTO> volunteerDTOS){
+        volunteerService.addVolunteerList(volunteerDTOS);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

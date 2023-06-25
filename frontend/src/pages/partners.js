@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
@@ -22,30 +22,33 @@ import { PartnersTable } from '../sections/partners/partners-table';
 import httpService from '../utils/http-client';
 import { PARTNERS } from '../constants/api';
 import { faker } from '@faker-js/faker';
+import { useAuth } from '../hooks/use-auth';
 
 function generateVolunteers(numVolunteers) {
   const departments = [
     1,2,3,4,5
   ];
 
-  const volunteers = [];
+  const partners = [];
   for (let i = 0; i < numVolunteers; i++) {
-    const firstName = faker.person.firstName();
-    const lastName = faker.person.lastName();
-    const email = faker.internet.email({firstName: firstName.toLowerCase(), lastName: lastName.toLowerCase(), provider: 'volport.com', allowSpecialCharacters: true})
-    const department = faker.helpers.arrayElement(departments);
-    const joinDate = faker.date.past().toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+    const name = faker.company.name();
+    const contact = faker.internet.email();
+    const fiscalID = faker.number.int({min: 10000000, max: 99999999});
+    const bank = faker.company.name()
+    const bankAccount = faker.finance.iban();
+    const observations = faker.commerce.productDescription();
 
-    const volunteer = {
-      firstName,
-      lastName,
-      email,
-      department,
-      joinDate,
+    const partner = {
+      name,
+      contact,
+      fiscalID,
+      bank,
+      bankAccount,
+      observations
     };
-    volunteers.push(volunteer);
+    partners.push(partner);
   }
-  return volunteers;
+  return partners;
 }
 
 // TODO: fetch data from API
@@ -70,12 +73,15 @@ const usePartnersIds = (partner) => {
 };
 
 const Page = () => {
+  const {user} = useAuth();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const partners = usePartners(page, rowsPerPage);
   const partnersIds = usePartnersIds(partners);
   const partnersSelection = useSelection(partnersIds);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [data, setPartners] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -85,6 +91,25 @@ const Page = () => {
     bankAccount: '',
     observations:''
   });
+
+  useEffect(() => {
+    fetchPartners();
+  }, [])
+
+  const fetchPartners = async () => {
+    try{
+      const { data } = await httpService.get('/api/partner', {
+        headers: {
+          'Authorization' : `Bearer ${user.accessToken}`
+        }
+      });
+      console.log(data);
+      setPartners(data);
+      setLoading(false);
+    } catch (error) {
+      console.log('Error fetching partners: ', error);
+    }
+  }
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -101,24 +126,29 @@ const Page = () => {
   );
 
   const handleAddButtonClick = () => {
-    console.log(JSON.stringify(generateVolunteers(126), null,2))
+    // console.log(JSON.stringify(generateVolunteers(56), null,2))
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
-    const postData = JSON.stringify(formData);
-    httpService.post('/api/partners', postData, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then((response) => {
-      if (response.ok) {
-        setIsDialogOpen(false);
-      }
-    });
-  };
+  const handleSubmit = async () => {
+    try{
+      console.log(formData);
+      const response = await httpService.post('/api/partner', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      console.log(response);
+    } catch (error) {
+      console.log('Error saving partner: ', error);
+    } finally {
+      fetchPartners();
+      setIsDialogOpen(false);
+    }
+  }
 
-  return (
+  return loading ? (<></>) : (
     <>
       <Head>
         <title>
@@ -250,7 +280,7 @@ const Page = () => {
             <PartnersSearch />
             <PartnersTable
               count={data.length}
-              items={partners}
+              items={data}
               onDeselectAll={partnersSelection.handleDeselectAll}
               onDeselectOne={partnersSelection.handleDeselectOne}
               onPageChange={handlePageChange}

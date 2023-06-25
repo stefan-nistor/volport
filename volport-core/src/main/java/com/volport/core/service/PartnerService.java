@@ -10,4 +10,6 @@ public interface PartnerService {
 
     PartnerDTO savePartner(PartnerDTO partnerDTO);
 
+    void addPartnerList(List<PartnerDTO> partnerDTOList);
+
 }

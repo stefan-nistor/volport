@@ -25,28 +25,34 @@ import httpService from '../utils/http-client';
 import { useAuth } from '../hooks/use-auth';
 
 const now = new Date();
-const dd = now.getDate();
-const mm = now.getMonth() + 1;
+let dd = now.getDate();
+let mm = now.getMonth() + 1;
 const yyyy = now.getFullYear();
+if (dd < 10) {
+  dd = `0${dd}`;
+}
+
+if (mm < 10) {
+  mm = `0${mm}`;
+}
 
 const Page = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [data, setVolunteers] = useState([]);
   const [loading, setLoading] = useState(true);
-
 
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
     email: '',
     joinDate: `${yyyy}-${mm}-${dd}`,
-    departmentId: '',
+    departmentId: ''
   });
 
   useEffect(() => {
-    fetchVolunteers()
-  }, [])
+    fetchVolunteers();
+  }, []);
 
   const handleAddButtonClick = () => {
     setIsDialogOpen(true);
@@ -69,22 +75,23 @@ const Page = () => {
 
   const handleSubmit = async () => {
     try {
+      console.log(formData);
       const response = await httpService.post('/api/volunteer', formData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${user.accessToken}`
         }
       });
-      console.log(response.data)
+      console.log(response.data);
     } catch (error) {
       console.log('Error saving volunteer: ', error);
     } finally {
-      setIsDialogOpen(false);
       fetchVolunteers();
+      setIsDialogOpen(false);
     }
   };
 
-  return loading ? (<></>) :(
+  return loading ? (<></>) : (
     <>
       <Head>
         <title>
