@@ -111,4 +111,9 @@ public class VolunteerServiceImpl implements VolunteerService {
         volunteerRepository.deleteById(id);
         return true;
     }
+
+    @Override
+    public Integer getDepartmentSize(Long departmentId) {
+        return volunteerRepository.findAllByDepartment_Id(departmentId).size();
+    }
 }

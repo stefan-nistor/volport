@@ -39,4 +39,9 @@ public class PartnerController {
         partnerService.addPartnerList(partnerDTOList);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @GetMapping("/number")
+    public ResponseEntity<?> getPartnerNumber(){
+        return ResponseEntity.ok().body(partnerService.getAll().size());
+    }
 }

@@ -60,4 +60,10 @@ public class VolunteerController {
         }
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
+
+    @GetMapping("/number")
+    public ResponseEntity<?> getVolunteerNumber(){
+        return ResponseEntity.ok().body(volunteerService.getAllVolunteers().size());
+    }
+
 }

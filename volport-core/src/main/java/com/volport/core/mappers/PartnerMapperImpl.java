@@ -11,6 +11,7 @@ public class PartnerMapperImpl implements PartnerMapper{
     public Partner toEntity(PartnerDTO partner) {
         return Partner.builder()
                 .id(partner.getId())
+                .name(partner.getName())
                 .bank(partner.getBank())
                 .bankAccount(partner.getBankAccount())
                 .contact(partner.getContact())
@@ -24,6 +25,7 @@ public class PartnerMapperImpl implements PartnerMapper{
     public PartnerDTO toDto(Partner partner) {
         return PartnerDTO.builder()
                 .id(partner.getId())
+                .name(partner.getName())
                 .bank(partner.getBank())
                 .bankAccount(partner.getBankAccount())
                 .contact(partner.getContact())

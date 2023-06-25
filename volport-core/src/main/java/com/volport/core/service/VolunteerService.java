@@ -40,4 +40,6 @@ public interface VolunteerService {
      * @return True if the volunteer was deleted successfully, False otherwise
      */
     boolean deleteVolunteer(Long id);
+
+    Integer getDepartmentSize(Long departmentId);
 }

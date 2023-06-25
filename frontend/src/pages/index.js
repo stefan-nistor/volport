@@ -8,31 +8,79 @@ import { OverviewTotalPartners } from 'src/sections/overview/overview-total-part
 import { OverviewDepartmentDistribution } from 'src/sections/overview/overview-department-distribution';
 import httpService from '../utils/http-client';
 import { useAuth } from '../hooks/use-auth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { OverviewOngoingTasks } from '../sections/overview/overview-ongoing-tasks';
-import { PARTNERS, TASKS, VOLUNTEERS } from '../constants/api';
-import { countVolunteersByDepartment } from '../utils/get-dept-size';
+import { TASKS } from '../constants/api';
 
 const now = new Date();
 
-
 const Page = () => {
-
   const { user } = useAuth();
-  let [partners, setPartners] = useState([]);
+  let [partnersNum, setPartnersNum] = useState(0);
+  let [volunteerNum, setVolunteerNum] = useState(0);
+  let [departments, setDepartments] = useState([]);
+  let [departmentLabels, setDepartmentLabels] = useState([]);
+  let [departmentSizes, setDepartmentSizes] = useState([]);
 
-  const fetchPartners = async () => {
-    try{
-      const { data } = await httpService.get('/partners', {
+  const fetchPartnersNumber = async () => {
+    try {
+      const { data } = await httpService.get('/api/partner/number', {
         headers: {
           'Authorization': `Bearer ${user.accessToken}`
         }
       });
       console.log(data);
-      } catch(error){
-      console.log('Error fetching partners: ', error)
+      setPartnersNum(data);
+    } catch (error) {
+      console.log('Error fetching partners number: ', error);
     }
   };
+
+  const fetchVolunteerNumber = async () => {
+    try {
+      const { data } = await httpService.get('/api/volunteer/number', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setVolunteerNum(data);
+    } catch (error) {
+      console.log('Error fetching volunteer number: ', error);
+    }
+  };
+
+  const fetchDepartments = async () => {
+    try {
+      const { data } = await httpService.get('/api/department', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setDepartments(data);
+
+      const labels = data.map((dept) => dept.acronym);
+      setDepartmentLabels(labels);
+
+      const sizesPromises = data.map((dept) =>
+        httpService.get(`/api/department/size/${dept.id}`, {
+          headers: {
+            'Authorization': `Bearer ${user.accessToken}`
+          }
+        })
+      );
+      const sizesResponses = await Promise.all(sizesPromises);
+      const sizes = sizesResponses.map((response) => response.data);
+      setDepartmentSizes(sizes);
+    } catch (error) {
+      console.log('Error fetching department data: ', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchVolunteerNumber();
+    fetchPartnersNumber();
+    fetchDepartments();
+  }, []);
 
   return (
     <>
@@ -73,7 +121,7 @@ const Page = () => {
                 difference={16}
                 positive={false}
                 sx={{ height: '100%' }}
-                value={VOLUNTEERS.length}
+                value={volunteerNum}
               />
             </Grid>
             <Grid
@@ -93,17 +141,17 @@ const Page = () => {
             >
               <OverviewTotalPartners
                 sx={{ height: '100%' }}
-                value={PARTNERS.length}
+                value={partnersNum}
               />
             </Grid>
             <Grid
               xs={12}
               lg={8}
             >
-            {/* place list of my tasks*/}
+              {/* place list of my tasks*/}
               <OverviewOngoingTasks
                 tasks={TASKS}
-                sx={{height:'100%'}}
+                sx={{ height: '100%' }}
               />
 
             </Grid>
@@ -113,14 +161,8 @@ const Page = () => {
               lg={4}
             >
               <OverviewDepartmentDistribution
-                chartSeries={[
-                  countVolunteersByDepartment(VOLUNTEERS, 'IT'),
-                  countVolunteersByDepartment(VOLUNTEERS, 'PR&M'),
-                  countVolunteersByDepartment(VOLUNTEERS, 'Proiecte'),
-                  countVolunteersByDepartment(VOLUNTEERS, 'Relații interne'),
-                  countVolunteersByDepartment(VOLUNTEERS, 'Relații externe')
-                ]}
-                labels={['IT', 'PR&M', 'PRO', 'RI', 'RE']}
+                chartSeries={departmentSizes}
+                labels={departmentLabels}
                 sx={{ height: '100%' }}
               />
             </Grid>

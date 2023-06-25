@@ -1,17 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import {
   Box,
   Button,
-  Container, Dialog, DialogActions,
+  Container,
+  Dialog,
+  DialogActions,
   DialogContent,
-  DialogTitle, FormControl, InputLabel, MenuItem, Select,
+  DialogTitle,
   Stack,
-  SvgIcon, TextField,
+  SvgIcon,
+  TextField,
   Typography
 } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
@@ -26,15 +28,15 @@ import { useAuth } from '../hooks/use-auth';
 
 function generateVolunteers(numVolunteers) {
   const departments = [
-    1,2,3,4,5
+    1, 2, 3, 4, 5
   ];
 
   const partners = [];
   for (let i = 0; i < numVolunteers; i++) {
     const name = faker.company.name();
     const contact = faker.internet.email();
-    const fiscalID = faker.number.int({min: 10000000, max: 99999999});
-    const bank = faker.company.name()
+    const fiscalID = faker.number.int({ min: 10000000, max: 99999999 });
+    const bank = faker.company.name();
     const bankAccount = faker.finance.iban();
     const observations = faker.commerce.productDescription();
 
@@ -73,7 +75,7 @@ const usePartnersIds = (partner) => {
 };
 
 const Page = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const partners = usePartners(page, rowsPerPage);
@@ -89,18 +91,18 @@ const Page = () => {
     fiscalID: '',
     bank: '',
     bankAccount: '',
-    observations:''
+    observations: ''
   });
 
   useEffect(() => {
     fetchPartners();
-  }, [])
+  }, []);
 
   const fetchPartners = async () => {
-    try{
+    try {
       const { data } = await httpService.get('/api/partner', {
         headers: {
-          'Authorization' : `Bearer ${user.accessToken}`
+          'Authorization': `Bearer ${user.accessToken}`
         }
       });
       console.log(data);
@@ -109,7 +111,7 @@ const Page = () => {
     } catch (error) {
       console.log('Error fetching partners: ', error);
     }
-  }
+  };
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -131,7 +133,7 @@ const Page = () => {
   };
 
   const handleSubmit = async () => {
-    try{
+    try {
       console.log(formData);
       const response = await httpService.post('/api/partner', formData, {
         headers: {
@@ -146,7 +148,7 @@ const Page = () => {
       fetchPartners();
       setIsDialogOpen(false);
     }
-  }
+  };
 
   return loading ? (<></>) : (
     <>
@@ -182,7 +184,7 @@ const Page = () => {
                     color="inherit"
                     startIcon={(
                       <SvgIcon fontSize="small">
-                        <ArrowUpOnSquareIcon />
+                        <ArrowUpOnSquareIcon/>
                       </SvgIcon>
                     )}
                   >
@@ -192,7 +194,7 @@ const Page = () => {
                     color="inherit"
                     startIcon={(
                       <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
+                        <ArrowDownOnSquareIcon/>
                       </SvgIcon>
                     )}
                   >
@@ -204,7 +206,7 @@ const Page = () => {
                 <Button
                   startIcon={(
                     <SvgIcon fontSize="small">
-                      <PlusIcon />
+                      <PlusIcon/>
                     </SvgIcon>
                   )}
                   variant="contained"
@@ -260,7 +262,7 @@ const Page = () => {
                     value={formData.bankAccount}
                     onChange={(e) => setFormData({ ...formData, bankAccount: e.target.value })}
                   />
-                <TextField
+                  <TextField
                     label="Observations"
                     fullWidth
                     required={false}
@@ -277,7 +279,7 @@ const Page = () => {
                 </Button>
               </DialogActions>
             </Dialog>
-            <PartnersSearch />
+            <PartnersSearch/>
             <PartnersTable
               count={data.length}
               items={data}
