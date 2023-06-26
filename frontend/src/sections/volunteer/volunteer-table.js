@@ -4,6 +4,7 @@ import {
   Avatar,
   Box,
   Card, IconButton,
+  CardHeader,
   Stack,
   Table,
   TableBody,
@@ -16,14 +17,13 @@ import {
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { DEPARTMENTS } from 'src/constants/api';
-import { XCircleIcon } from '@heroicons/react/24/solid';
-import { BriefcaseIcon } from '@heroicons/react/20/solid';
 
 export const VolunteerTable = (props) => {
   const {
     count = 0,
     items = [],
-    selected = []
+    selected = [],
+    title = ""
   } = props;
 
   const [sortColumn, setSortColumn] = useState('joinDate');
@@ -62,6 +62,7 @@ export const VolunteerTable = (props) => {
 
   return (
     <Card>
+      <CardHeader title={title} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -144,5 +145,6 @@ export const VolunteerTable = (props) => {
 
 VolunteerTable.propTypes = {
   count: PropTypes.number,
-  items: PropTypes.array
+  items: PropTypes.array,
+  title: PropTypes.string
 };

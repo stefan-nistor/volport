@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 import {
   Box,
-  Card,
+  Card, CardHeader,
   Table,
   TableBody,
   TableCell,
@@ -15,6 +14,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 
 export const PartnersTable = (props) => {
   const {
+    title = "",
     count = 0,
     items = [],
     onPageChange = () => {},
@@ -64,6 +64,7 @@ export const PartnersTable = (props) => {
 
   return (
     <Card>
+      <CardHeader title={title} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -163,6 +164,7 @@ export const PartnersTable = (props) => {
 PartnersTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
+  title: PropTypes.string,
   onDeselectAll: PropTypes.func,
   onDeselectOne: PropTypes.func,
   onPageChange: PropTypes.func,
