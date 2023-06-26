@@ -1,8 +1,10 @@
 package com.volport.core.service;
 
 import com.volport.core.dto.ProjectDTO;
+import com.volport.core.dto.VolunteerDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProjectService {
 
@@ -13,4 +15,8 @@ public interface ProjectService {
     ProjectDTO saveProject(ProjectDTO projectDTO);
 
     void saveProjectList(List<ProjectDTO> projectDTOList);
+
+    List<VolunteerDTO> getProjectVolunteers(Long id);
+
+    void updateProject(Map<String, List<Long>> updates, Long id);
 }

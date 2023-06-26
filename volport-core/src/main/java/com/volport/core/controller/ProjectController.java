@@ -1,13 +1,17 @@
 package com.volport.core.controller;
 
 import com.volport.core.dto.ProjectDTO;
+import com.volport.core.exceptions.ProjectNotFoundException;
+import com.volport.core.repository.ProjectRepository;
 import com.volport.core.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/project")
@@ -15,6 +19,8 @@ public class ProjectController {
 
     @Autowired
     ProjectService projectService;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @GetMapping
     public ResponseEntity<?> getAll(){
@@ -28,7 +34,7 @@ public class ProjectController {
 
     @GetMapping("/{id}/volunteers")
     public ResponseEntity<?> getVolunteersForProjectId(@PathVariable Long id) {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(projectService.getProjectVolunteers(id));
     }
 
     @PostMapping
@@ -44,6 +50,12 @@ public class ProjectController {
     public ResponseEntity<?> addProjectList(@RequestBody List<ProjectDTO> projectDTOList) {
         projectService.saveProjectList(projectDTOList);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateProject(@RequestBody Map<String, List<Long>> updates, @PathVariable Long id){
+        projectService.updateProject(updates, id);
+        return ResponseEntity.ok().build();
     }
 
 }
