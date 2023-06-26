@@ -1,6 +1,21 @@
 import Head from 'next/head';
 
-import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
+import {
+  Box,
+  Button,
+  CardActions,
+  CardHeader,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  MenuItem,
+  SvgIcon,
+  TextField,
+  Unstable_Grid2 as Grid
+} from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { OverviewUpcomingEvents } from 'src/sections/overview/overview-upcoming-events';
 import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
@@ -8,12 +23,13 @@ import { OverviewTotalVolunteers } from 'src/sections/overview/overview-total-vo
 import { OverviewTotalPartners } from 'src/sections/overview/overview-total-partners';
 import { OverviewDepartmentDistribution } from 'src/sections/overview/overview-department-distribution';
 import { useRouter } from 'next/router';
-import { OverviewOngoingTasks } from '../../sections/overview/overview-ongoing-tasks';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import httpService from '../../utils/http-client';
 import { VolunteerTable } from '../../sections/volunteer/volunteer-table';
 import { PartnersTable } from '../../sections/partners/partners-table';
+import { ProjectTasks } from '../../sections/projects/project-tasks';
+import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 
 const Page = () => {
   const router = useRouter();
@@ -24,6 +40,39 @@ const Page = () => {
   const [volunteers, setVolunteers] = useState([]);
   const [partners, setPartners] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [departmentLabels, setDepartmentLabels] = useState([]);
+  let [departments, setDepartments] = useState([]);
+  let [departmentSizes, setDepartmentSizes] = useState([]);
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  function calculateDepartmentSizes(volunteers, departments) {
+    const departmentSizes = {};
+
+    // Initialize department sizes with 0
+    departments.forEach((department) => {
+      departmentSizes[department.id] = 0;
+    });
+
+    // Count the number of volunteers in each department
+    volunteers.forEach((volunteer) => {
+      const departmentId = volunteer.departmentId;
+      if (departmentSizes.hasOwnProperty(departmentId)) {
+        departmentSizes[departmentId]++;
+      } else {
+        console.error(`Invalid departmentId ${departmentId} for volunteer`);
+      }
+    });
+
+    // Create an array of sizes based on department IDs
+    const sizesArray = departments.map((department) => departmentSizes[department.id]);
+
+    return sizesArray;
+  }
+
+  function handleCloseDialog() {
+
+  };
 
   const fetchProject = async () => {
     try {
@@ -92,14 +141,35 @@ const Page = () => {
     }
   };
 
+  const fetchDepartments = async () => {
+    try {
+      const { data } = await httpService.get('/api/department', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setDepartments(data);
+
+      const labels = data.map((dept) => dept.acronym);
+      setDepartmentLabels(labels);
+      setDepartmentSizes(calculateDepartmentSizes(volunteers, departments));
+    } catch (error) {
+      console.log('Error fetching department data: ', error);
+    }
+  };
+
   useEffect(() => {
     fetchProject();
     fetchVolunteers();
     fetchPartners();
     fetchTasks();
+    fetchDepartments();
   }, []);
 
-  console.log(partners)
+  const handleAddTask = () => {
+    setOpenDialog(true);
+  };
+
   return loading ? (<></>) : (
     <>
       <Head>
@@ -166,10 +236,27 @@ const Page = () => {
               xs={12}
               lg={8}
             >
-              <OverviewOngoingTasks
-                orders={[]}
+              <ProjectTasks
+                tasks={tasks}
+                volunteers={volunteers}
                 sx={{ height: '100%' }}
               />
+              <Divider/>
+              <CardActions sx={{ justifyContent: 'flex-end' }}>
+                <Button
+                  color="inherit"
+                  endIcon={(
+                    <SvgIcon fontSize="small">
+                      <PlusIcon/>
+                    </SvgIcon>
+                  )}
+                  size="small"
+                  variant="text"
+                  onClick={handleAddTask}
+                >
+                  Add
+                </Button>
+              </CardActions>
             </Grid>
             <Grid
               xs={12}
@@ -177,29 +264,107 @@ const Page = () => {
               lg={4}
             >
               <OverviewDepartmentDistribution
-                chartSeries={[63, 15, 22, 19, 30]}
-                labels={['IT', 'PRM', 'PRO', 'RI', 'RE']}
+                chartSeries={departmentSizes}
+                labels={departmentLabels}
                 sx={{ height: '100%' }}
               />
             </Grid>
           </Grid>
+          <Divider/>
           <Box>
+            <CardHeader title="Volunteers"/>
             <VolunteerTable
               count={volunteers.length}
               items={volunteers}
               title="Volunteers"
             />
+            <CardActions sx={{ justifyContent: 'flex-end' }}>
+              <Button
+                color="inherit"
+                endIcon={(
+                  <SvgIcon fontSize="small">
+                    <PlusIcon/>
+                  </SvgIcon>
+                )}
+                size="small"
+                variant="text"
+              >
+                Add
+              </Button>
+            </CardActions>
           </Box>
           <Box>
+            <CardHeader title="Partners"/>
             <PartnersTable
               count={partners.length}
               items={partners}
               title="Partners"
             />
+            <CardActions sx={{ justifyContent: 'flex-end' }}>
+              <Button
+                color="inherit"
+                endIcon={(
+                  <SvgIcon fontSize="small">
+                    <PlusIcon/>
+                  </SvgIcon>
+                )}
+                size="small"
+                variant="text"
+              >
+                Add
+              </Button>
+            </CardActions>
           </Box>
         </Container>
+
+        <Dialog open={openDialog} onClose={handleCloseDialog}>
+          <DialogTitle>Add Task</DialogTitle>
+          <DialogContent>
+            {/* Form fields */}
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Name"
+              fullWidth
+              // Add necessary event handlers and value
+            />
+            <TextField
+              margin="dense"
+              label="Description"
+              fullWidth
+              // Add necessary event handlers and value
+            />
+            <TextField
+              margin="dense"
+              label="Deadline"
+              fullWidth
+              // Add necessary event handlers and value
+            />
+            <TextField
+              margin="dense"
+              label="Volunteer"
+              fullWidth
+              select
+              // Add necessary event handlers and value
+            >
+              {/* Render dropdown options from volunteers */}
+              {volunteers.map((volunteer) => (
+                <MenuItem key={volunteer.id} value={volunteer.id}>
+                  {volunteer.firstname + ' ' + volunteer.lastname}
+                </MenuItem>
+              ))}
+            </TextField>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button onClick={handleCloseDialog} variant="contained" color="primary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
+
   );
 };
 

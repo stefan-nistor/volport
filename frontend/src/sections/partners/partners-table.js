@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Box,
-  Card, CardHeader,
+  Box, Button,
+  Card, CardActions, CardHeader, Divider, SvgIcon,
   Table,
   TableBody,
   TableCell,
@@ -11,6 +11,8 @@ import {
   TableRow, TableSortLabel
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
+import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
+import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 
 export const PartnersTable = (props) => {
   const {
@@ -64,7 +66,6 @@ export const PartnersTable = (props) => {
 
   return (
     <Card>
-      <CardHeader title={title} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>

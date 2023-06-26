@@ -69,7 +69,7 @@ export const ProjectCard = (props) => {
               display="inline"
               variant="body2"
             >
-              {project.partners} Partners
+              {project.partnerIds.length} Partners
             </Typography>
           </Stack>
           <Stack
@@ -88,7 +88,7 @@ export const ProjectCard = (props) => {
               display="inline"
               variant="body2"
             >
-              {project.volunteers} Volunteers
+              {project.volunteerIds.length} Volunteers
             </Typography>
           </Stack>
         </Stack>

@@ -12,11 +12,13 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Typography
+  Typography, Divider, CardActions, Button, SvgIcon
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { DEPARTMENTS } from 'src/constants/api';
+import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
+import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 
 export const VolunteerTable = (props) => {
   const {
@@ -62,7 +64,6 @@ export const VolunteerTable = (props) => {
 
   return (
     <Card>
-      <CardHeader title={title} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
