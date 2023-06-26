@@ -23,6 +23,8 @@ public class TaskServiceImpl implements TaskService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
     private static final String NOT_FOUND_EXCEPTION = "No task for given id";
+    private static final String UNASSIGNED = "unassigned";
+    private static final String IN_PROGRESS = "inprogress";
     private final TaskRepository taskRepository;
     private final VolunteerRepository volunteerRepository;
     private final ProjectRepository projectRepository;
@@ -44,12 +46,13 @@ public class TaskServiceImpl implements TaskService {
                 .map(task -> TaskDTO.builder()
                         .id(task.getId())
                         .deadline(task.getDeadline())
+                        .startDate(task.getStartDate())
                         .status(task.getStatus())
                         .description(task.getDescription())
                         .effort(task.getEffort())
                         .name(task.getName())
                         .projectId(task.getProject().getId())
-                        .volunteersIds(task.getVolunteers().stream()
+                        .volunteerIds(task.getVolunteers().stream()
                                 .map(Volunteer::getId).toList())
                         .build()
                 )
@@ -62,12 +65,13 @@ public class TaskServiceImpl implements TaskService {
         return TaskDTO.builder()
                 .id(task.getId())
                 .deadline(task.getDeadline())
+                .startDate(task.getStartDate())
                 .status(task.getStatus())
                 .description(task.getDescription())
                 .effort(task.getEffort())
                 .name(task.getName())
                 .projectId(task.getProject().getId())
-                .volunteersIds(task.getVolunteers().stream()
+                .volunteerIds(task.getVolunteers().stream()
                         .map(Volunteer::getId).toList())
                 .build();
     }
@@ -75,17 +79,28 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void saveTask(TaskDTO taskDTO) {
         var task = modelMapper.map(taskDTO, Task.class);
-        var volunteers = volunteerRepository.findAllById(taskDTO.getVolunteersIds());
+        var volunteers = volunteerRepository.findAllById(taskDTO.getVolunteerIds());
         var project = projectRepository.findById(taskDTO.getProjectId()).orElseThrow(() -> new ProjectNotFoundException(ProjectServiceImpl.NOT_FOUND_EXCEPTION));
         task.setVolunteers(volunteers);
         task.setProject(project);
+
+        if(!task.getStatus().isEmpty()) {
+            taskRepository.save(task);
+            return;
+        }
+
+        if(task.getVolunteers().isEmpty()){
+            task.setStatus(UNASSIGNED);
+        } else {
+            task.setStatus(IN_PROGRESS);
+        }
         taskRepository.save(task);
     }
 
     @Override
     public void updateTask(TaskDTO taskDTO, Long id) {
         var task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(NOT_FOUND_EXCEPTION));
-        var volunteers = volunteerRepository.findAllById(taskDTO.getVolunteersIds());
+        var volunteers = volunteerRepository.findAllById(taskDTO.getVolunteerIds());
         var project = projectRepository.findById(taskDTO.getProjectId()).orElseThrow(() -> new ProjectNotFoundException(ProjectServiceImpl.NOT_FOUND_EXCEPTION));
 
         task.setEffort(taskDTO.getEffort());
@@ -103,12 +118,13 @@ public class TaskServiceImpl implements TaskService {
                 .map(task -> TaskDTO.builder()
                         .id(task.getId())
                         .deadline(task.getDeadline())
+                        .startDate(task.getStartDate())
                         .status(task.getStatus())
                         .description(task.getDescription())
                         .effort(task.getEffort())
                         .name(task.getName())
                         .projectId(task.getProject().getId())
-                        .volunteersIds(task.getVolunteers().stream()
+                        .volunteerIds(task.getVolunteers().stream()
                                 .map(Volunteer::getId).toList())
                         .build()
                 )

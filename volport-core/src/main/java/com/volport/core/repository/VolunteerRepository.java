@@ -3,7 +3,6 @@ package com.volport.core.repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.volport.core.model.Department;
 import com.volport.core.model.Volunteer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

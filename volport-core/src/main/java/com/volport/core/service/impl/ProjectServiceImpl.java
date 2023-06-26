@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -68,10 +69,10 @@ public class ProjectServiceImpl implements ProjectService {
                         .logo(project.getLogo())
                         .volunteerIds(project.getVolunteers().stream()
                                 .map(Volunteer::getId)
-                                .toList())
+                                .collect(Collectors.toSet()))
                         .partnerIds(project.getPartners().stream()
                                 .map(Partner::getId)
-                                .toList())
+                                .collect(Collectors.toSet()))
                         .build())
                 .toList();
     }
@@ -86,10 +87,10 @@ public class ProjectServiceImpl implements ProjectService {
                 .logo(project.getLogo())
                 .volunteerIds(project.getVolunteers().stream()
                         .map(Volunteer::getId)
-                        .toList())
+                        .collect(Collectors.toSet()))
                 .partnerIds(project.getPartners().stream()
                         .map(Partner::getId)
-                        .toList())
+                        .collect(Collectors.toSet()))
                 .build();
     }
 

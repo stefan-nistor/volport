@@ -5,6 +5,7 @@ import lombok.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * DTO for {@link com.volport.core.model.Project}
@@ -23,6 +24,6 @@ public class ProjectDTO  {
     String name;
     String description;
     String logo;
-    List<Long> volunteerIds;
-    List<Long> partnerIds;
+    Set<Long> volunteerIds;
+    Set<Long> partnerIds;
 }

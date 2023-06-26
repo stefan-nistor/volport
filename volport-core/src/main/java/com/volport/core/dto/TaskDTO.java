@@ -22,8 +22,9 @@ public class TaskDTO implements Serializable {
     String name;
     String description;
     LocalDate deadline;
+    LocalDate startDate;
     String status;
     Integer effort;
     Long projectId;
-    List<Long> volunteersIds;
+    List<Long> volunteerIds;
 }

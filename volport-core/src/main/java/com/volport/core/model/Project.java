@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -39,7 +40,7 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "volunteer_id")
     )
-    private List<Volunteer> volunteers;
+    private Set<Volunteer> volunteers;
 
     @ManyToMany
     @JoinTable(

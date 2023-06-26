@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -32,6 +33,7 @@ public class Task {
     private String name;
     private String description;
     private LocalDate deadline;
+    private LocalDate startDate;
     private String status;
     private Integer effort;
 
