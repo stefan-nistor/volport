@@ -1,12 +1,15 @@
-package com.volport.core.service;
+package com.volport.core.service.impl;
 
 import com.volport.core.model.User;
 import com.volport.core.repository.UserRepository;
+import com.volport.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,8 +26,8 @@ public class UserServiceImpl implements UserService {
 
         try{
             return userRepository.get(uid);
-        } catch (Exception e) {
-            LOGGER.error("Error occurred: {}", e.getMessage());
+        } catch (ExecutionException | InterruptedException e) {
+            LOGGER.error(e.getMessage());
         }
         return null;
     }

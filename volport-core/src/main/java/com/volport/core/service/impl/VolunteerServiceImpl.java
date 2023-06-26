@@ -1,6 +1,5 @@
-package com.volport.core.service;
+package com.volport.core.service.impl;
 
-import com.volport.core.dto.DepartmentDTO;
 import com.volport.core.dto.VolunteerDTO;
 import com.volport.core.exceptions.UserAlreadyExistsException;
 import com.volport.core.exceptions.VolunteerNotFoundException;
@@ -8,6 +7,7 @@ import com.volport.core.model.Project;
 import com.volport.core.model.Task;
 import com.volport.core.model.Volunteer;
 import com.volport.core.repository.VolunteerRepository;
+import com.volport.core.service.VolunteerService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

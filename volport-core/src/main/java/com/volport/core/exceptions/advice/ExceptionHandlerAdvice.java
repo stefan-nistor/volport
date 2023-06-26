@@ -1,9 +1,10 @@
-package com.volport.core.exceptions;
+package com.volport.core.exceptions.advice;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.volport.core.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +28,8 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             VolunteerNotFoundException.class,
-            ProjectNotFoundException.class
+            ProjectNotFoundException.class,
+            TaskNotFoundException.class
     })
     public ResponseEntity<Object> notFoundException(RuntimeException e){
         Map<String, Object> result = new HashMap<>();

@@ -1,9 +1,10 @@
-package com.volport.core.service;
+package com.volport.core.service.impl;
 
 import com.volport.core.dto.DepartmentDTO;
 import com.volport.core.exceptions.DepartmentAlreadyExistsException;
 import com.volport.core.model.Department;
 import com.volport.core.repository.DepartmentRepository;
+import com.volport.core.service.DepartmentService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

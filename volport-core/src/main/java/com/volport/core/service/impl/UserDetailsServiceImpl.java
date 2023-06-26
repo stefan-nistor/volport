@@ -1,4 +1,4 @@
-package com.volport.core.service;
+package com.volport.core.service.impl;
 
 import com.volport.core.repository.VolunteerRepository;
 import org.slf4j.Logger;

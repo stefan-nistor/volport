@@ -1,9 +1,8 @@
 package com.volport.core.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Value;
+import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,8 +12,12 @@ import java.util.List;
  */
 @Value
 @Data
+@Getter
+@Setter
 @Builder
 public class TaskDTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -21697835225554779L;
     Long id;
     String name;
     String description;

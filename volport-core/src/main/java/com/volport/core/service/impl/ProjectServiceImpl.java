@@ -1,4 +1,4 @@
-package com.volport.core.service;
+package com.volport.core.service.impl;
 
 import com.volport.core.dto.ProjectDTO;
 import com.volport.core.dto.VolunteerDTO;
@@ -10,6 +10,7 @@ import com.volport.core.model.Volunteer;
 import com.volport.core.repository.PartnerRepository;
 import com.volport.core.repository.ProjectRepository;
 import com.volport.core.repository.VolunteerRepository;
+import com.volport.core.service.ProjectService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
-    private static final String NOT_FOUND_EXCEPTION = "No such project for given id";
+    static final String NOT_FOUND_EXCEPTION = "No such project for given id";
     private static final String KEY_VOLUNTEER_IDS = "volunteerIds";
     private static final String KEY_PARTNER_IDS = "partnerIds";
 
@@ -34,7 +35,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ProjectServiceImpl(ProjectRepository projectRepository, VolunteerRepository volunteerRepository, PartnerRepository partnerRepository, ModelMapper modelMapper){
+    public ProjectServiceImpl(ProjectRepository projectRepository, VolunteerRepository volunteerRepository, PartnerRepository partnerRepository, ModelMapper modelMapper) {
         this.projectRepository = projectRepository;
         this.volunteerRepository = volunteerRepository;
         this.partnerRepository = partnerRepository;
@@ -104,14 +105,14 @@ public class ProjectServiceImpl implements ProjectService {
     public void updateProject(Map<String, List<Long>> updates, Long id) {
         var project = projectRepository.findById(id).orElseThrow(() -> new ProjectNotFoundException(NOT_FOUND_EXCEPTION));
 
-        if(updates.containsKey(KEY_VOLUNTEER_IDS)) {
+        if (updates.containsKey(KEY_VOLUNTEER_IDS)) {
             var volunteers = project.getVolunteers();
             var newVolunteers = volunteerRepository.findAllById(updates.get(KEY_VOLUNTEER_IDS));
             volunteers.addAll(newVolunteers);
             project.setVolunteers(volunteers);
         }
 
-        if(updates.containsKey(KEY_PARTNER_IDS)) {
+        if (updates.containsKey(KEY_PARTNER_IDS)) {
             var partners = project.getPartners();
             var newPartners = partnerRepository.findAllById(updates.get(KEY_PARTNER_IDS));
             partners.addAll(newPartners);
