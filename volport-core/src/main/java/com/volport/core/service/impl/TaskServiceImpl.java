@@ -13,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -98,4 +97,21 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.save(task);
     }
 
+    @Override
+    public List<TaskDTO> getByProjectId(Long id) {
+        return taskRepository.findByProject_Id(id).stream()
+                .map(task -> TaskDTO.builder()
+                        .id(task.getId())
+                        .deadline(task.getDeadline())
+                        .status(task.getStatus())
+                        .description(task.getDescription())
+                        .effort(task.getEffort())
+                        .name(task.getName())
+                        .projectId(task.getProject().getId())
+                        .volunteersIds(task.getVolunteers().stream()
+                                .map(Volunteer::getId).toList())
+                        .build()
+                )
+                .toList();
+    }
 }

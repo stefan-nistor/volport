@@ -1,5 +1,6 @@
 package com.volport.core.service.impl;
 
+import com.volport.core.dto.PartnerDTO;
 import com.volport.core.dto.ProjectDTO;
 import com.volport.core.dto.VolunteerDTO;
 import com.volport.core.exceptions.ProjectAlreadyExistsException;
@@ -10,7 +11,9 @@ import com.volport.core.model.Volunteer;
 import com.volport.core.repository.PartnerRepository;
 import com.volport.core.repository.ProjectRepository;
 import com.volport.core.repository.VolunteerRepository;
+import com.volport.core.service.PartnerService;
 import com.volport.core.service.ProjectService;
+import com.volport.core.service.VolunteerService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +32,28 @@ public class ProjectServiceImpl implements ProjectService {
     private static final String KEY_VOLUNTEER_IDS = "volunteerIds";
     private static final String KEY_PARTNER_IDS = "partnerIds";
 
+    private final ModelMapper modelMapper;
     private final ProjectRepository projectRepository;
     private final VolunteerRepository volunteerRepository;
     private final PartnerRepository partnerRepository;
-    private final ModelMapper modelMapper;
+    private final VolunteerService volunteerService;
+    private final PartnerService partnerService;
+
 
     @Autowired
-    public ProjectServiceImpl(ProjectRepository projectRepository, VolunteerRepository volunteerRepository, PartnerRepository partnerRepository, ModelMapper modelMapper) {
+    public ProjectServiceImpl(ProjectRepository projectRepository,
+                              VolunteerRepository volunteerRepository,
+                              PartnerRepository partnerRepository,
+                              ModelMapper modelMapper,
+                              VolunteerService volunteerService,
+                              PartnerService partnerService
+    ) {
+        this.modelMapper = modelMapper;
         this.projectRepository = projectRepository;
         this.volunteerRepository = volunteerRepository;
         this.partnerRepository = partnerRepository;
-        this.modelMapper = modelMapper;
+        this.volunteerService = volunteerService;
+        this.partnerService = partnerService;
     }
 
     @Override
@@ -95,10 +109,22 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<VolunteerDTO> getProjectVolunteers(Long id) {
-        var volunteers = projectRepository.findById(id).orElseThrow(() -> new ProjectNotFoundException(NOT_FOUND_EXCEPTION)).getVolunteers();
-        return volunteers.stream()
-                .map(volunteer -> modelMapper.map(volunteer, VolunteerDTO.class))
+        var volunteersIds = projectRepository.findById(id).orElseThrow(() -> new ProjectNotFoundException(NOT_FOUND_EXCEPTION))
+                .getVolunteers()
+                .stream()
+                .map(Volunteer::getId)
                 .toList();
+        return volunteerService.getAllByIds(volunteersIds);
+    }
+
+    @Override
+    public List<PartnerDTO> getProjectPartners(Long id) {
+        var partnersIds = projectRepository.findById(id).orElseThrow(() -> new ProjectNotFoundException(NOT_FOUND_EXCEPTION))
+                .getPartners()
+                .stream()
+                .map(Partner::getId)
+                .toList();
+        return partnerService.getAllByIds(partnersIds);
     }
 
     @Override

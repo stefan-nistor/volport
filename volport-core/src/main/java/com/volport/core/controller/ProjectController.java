@@ -41,6 +41,11 @@ public class ProjectController {
         return ResponseEntity.ok().body(projectService.getProjectVolunteers(id));
     }
 
+    @GetMapping("/{id}/partners")
+    public ResponseEntity<?> getParntersForProjectId(@PathVariable Long id) {
+        return ResponseEntity.ok().body(projectService.getProjectPartners(id));
+    }
+
     @PostMapping
     public ResponseEntity<?> addProject(@RequestBody ProjectDTO projectDTO) {
         var result = projectService.saveProject(projectDTO);

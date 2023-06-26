@@ -42,4 +42,6 @@ public interface VolunteerService {
     boolean deleteVolunteer(Long id);
 
     Integer getDepartmentSize(Long departmentId);
+
+    List<VolunteerDTO> getAllByIds(List<Long> ids);
 }

@@ -66,4 +66,9 @@ public class VolunteerController {
         return ResponseEntity.ok().body(volunteerService.getAllVolunteers().size());
     }
 
+    @PostMapping("/fetch-id")
+    public ResponseEntity<?> getVolunteersByIds(@RequestBody List<Long> ids){
+        return ResponseEntity.ok(volunteerService.getAllByIds(ids));
+    }
+
 }

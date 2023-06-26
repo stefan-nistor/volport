@@ -30,6 +30,11 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
+    public List<PartnerDTO> getAllByIds(List<Long> ids) {
+        return partnerRepository.findAllById(ids).stream().map(partnerMapper::toDto).toList();
+    }
+
+    @Override
     public PartnerDTO savePartner(PartnerDTO partnerDTO) {
         if (partnerRepository.findByName(partnerDTO.getName()).isPresent()) {
             LOGGER.error("Partner already exists - {}", partnerDTO.getName());

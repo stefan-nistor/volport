@@ -7,6 +7,7 @@ import java.util.List;
 public interface PartnerService {
 
     List<PartnerDTO> getAll();
+    List<PartnerDTO> getAllByIds(List<Long> ids);
 
     PartnerDTO savePartner(PartnerDTO partnerDTO);
 

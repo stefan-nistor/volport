@@ -33,6 +33,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getById(id));
     }
 
+    @GetMapping("/project/{id}")
+    public ResponseEntity<?> getByProjectId(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.getByProjectId(id));
+    }
+
     @PostMapping
     public ResponseEntity<?> saveTask(@RequestBody TaskDTO taskDTO) {
         taskService.saveTask(taskDTO);
