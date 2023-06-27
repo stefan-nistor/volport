@@ -5,6 +5,7 @@ import com.volport.core.dto.ProjectDTO;
 import com.volport.core.dto.VolunteerDTO;
 import com.volport.core.exceptions.ProjectAlreadyExistsException;
 import com.volport.core.exceptions.ProjectNotFoundException;
+import com.volport.core.model.Department;
 import com.volport.core.model.Partner;
 import com.volport.core.model.Project;
 import com.volport.core.model.Volunteer;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -126,6 +128,22 @@ public class ProjectServiceImpl implements ProjectService {
                 .map(Partner::getId)
                 .toList();
         return partnerService.getAllByIds(partnersIds);
+    }
+
+    @Override
+    public Map<String, Integer> getProjectDepartments(Long id) {
+        var project = projectRepository.findById(id).orElseThrow(() -> new ProjectNotFoundException(NOT_FOUND_EXCEPTION));
+        Map<String, Integer> departmentSizes = new HashMap<>();
+
+        for (Volunteer volunteer : project.getVolunteers()) {
+            Department department = volunteer.getDepartment();
+            if (department != null) {
+                String departmentName = department.getAcronym();
+                int currentSize = departmentSizes.getOrDefault(departmentName, 0);
+                departmentSizes.put(departmentName, currentSize + 1);
+            }
+        }
+        return departmentSizes;
     }
 
     @Override

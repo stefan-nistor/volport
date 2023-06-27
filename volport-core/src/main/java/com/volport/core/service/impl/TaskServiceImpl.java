@@ -15,7 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -25,6 +28,7 @@ public class TaskServiceImpl implements TaskService {
     private static final String NOT_FOUND_EXCEPTION = "No task for given id";
     private static final String UNASSIGNED = "unassigned";
     private static final String IN_PROGRESS = "inprogress";
+    private static final String COMPLETED = "completed";
     private final TaskRepository taskRepository;
     private final VolunteerRepository volunteerRepository;
     private final ProjectRepository projectRepository;
@@ -94,6 +98,11 @@ public class TaskServiceImpl implements TaskService {
         } else {
             task.setStatus(IN_PROGRESS);
         }
+
+        if(task.getEffort() > 0){
+            task.setStatus(COMPLETED);
+        }
+
         taskRepository.save(task);
     }
 
@@ -129,5 +138,60 @@ public class TaskServiceImpl implements TaskService {
                         .build()
                 )
                 .toList();
+    }
+
+    @Override
+    public List<TaskDTO> getOngoingTasks() {
+        return taskRepository.findByStatus(IN_PROGRESS).stream()
+                .map(task -> TaskDTO.builder()
+                        .id(task.getId())
+                        .deadline(task.getDeadline())
+                        .startDate(task.getStartDate())
+                        .status(task.getStatus())
+                        .description(task.getDescription())
+                        .effort(task.getEffort())
+                        .name(task.getName())
+                        .projectId(task.getProject().getId())
+                        .volunteerIds(task.getVolunteers().stream()
+                                .map(Volunteer::getId).toList())
+                        .build()
+                )
+                .toList();
+    }
+
+    @Override
+    public Double getOverallProgress() {
+        var completedSize = taskRepository.findByStatus(COMPLETED).size();
+        var totalSize = taskRepository.findAll().size();
+        if(totalSize == 0){
+            return 0.0;
+        }
+        return (double) completedSize / totalSize * 100;
+    }
+
+    @Override
+    public Double getProjectProgress(Long id) {
+        var totalSize = taskRepository.findByProject_Id(id).size();
+        var completedSize = taskRepository.findByProject_IdAndStatus(id, COMPLETED).size();
+        if(totalSize == 0){
+            return 0.0;
+        }
+        return (double) completedSize / totalSize * 100;
+    }
+
+    @Override
+    public Map<String, LocalDate> getProjectFirstDeadline(Long id) {
+        var task = taskRepository.findByProject_IdOrderByDeadlineAsc(id).stream().findFirst().orElseThrow();
+        Map<String, LocalDate> result = new HashMap<>();
+        result.put(task.getName(), task.getDeadline());
+        return result;
+    }
+
+    @Override
+    public Map<String, LocalDate> getFirstDeadlineOverall() {
+        var task = taskRepository.findAllByOrderByDeadlineAsc().stream().findFirst().orElseThrow();
+        Map<String, LocalDate> result = new HashMap<>();
+        result.put(task.getName(), task.getDeadline());
+        return  result;
     }
 }

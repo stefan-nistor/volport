@@ -20,5 +20,7 @@ public interface ProjectService {
     List<VolunteerDTO> getProjectVolunteers(Long id);
     List<PartnerDTO> getProjectPartners(Long id);
 
+    Map<String, Integer> getProjectDepartments(Long id);
+
     void updateProject(Map<String, List<Long>> updates, Long id);
 }

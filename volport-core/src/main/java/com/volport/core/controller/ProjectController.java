@@ -46,6 +46,11 @@ public class ProjectController {
         return ResponseEntity.ok().body(projectService.getProjectPartners(id));
     }
 
+    @GetMapping("/{id}/departments")
+    public ResponseEntity<?> getDepartmentsForProjectId(@PathVariable Long id){
+        return ResponseEntity.ok().body(projectService.getProjectDepartments(id));
+    }
+
     @PostMapping
     public ResponseEntity<?> addProject(@RequestBody ProjectDTO projectDTO) {
         var result = projectService.saveProject(projectDTO);
@@ -61,7 +66,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<?> updateProject(@RequestBody Map<String, List<Long>> updates, @PathVariable Long id) {
         projectService.updateProject(updates, id);
         return ResponseEntity.ok().build();

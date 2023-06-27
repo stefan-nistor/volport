@@ -121,17 +121,35 @@ public class VolunteerServiceImpl implements VolunteerService {
     public List<VolunteerDTO> getAllByIds(List<Long> ids) {
         return volunteerRepository.findAllById(ids).stream()
                 .map(volunteer -> VolunteerDTO.builder()
-                .id(volunteer.getId())
-                .firstname(volunteer.getFirstname())
-                .lastname(volunteer.getLastname())
-                .email(volunteer.getEmail())
-                .canVote(volunteer.isCanVote())
-                .departmentId(volunteer.getDepartment().getId())
-                .joinDate(volunteer.getJoinDate())
-                .projectIds(volunteer.getProjects().stream().map(Project::getId).toList())
-                .taskIds(volunteer.getTasks().stream().map(Task::getId).toList())
-                .build()
-        )
+                        .id(volunteer.getId())
+                        .firstname(volunteer.getFirstname())
+                        .lastname(volunteer.getLastname())
+                        .email(volunteer.getEmail())
+                        .canVote(volunteer.isCanVote())
+                        .departmentId(volunteer.getDepartment().getId())
+                        .joinDate(volunteer.getJoinDate())
+                        .projectIds(volunteer.getProjects().stream().map(Project::getId).toList())
+                        .taskIds(volunteer.getTasks().stream().map(Task::getId).toList())
+                        .build()
+                )
+                .toList();
+    }
+
+    @Override
+    public List<VolunteerDTO> getAllAssigned() {
+        return volunteerRepository.findByTasksNotEmpty().stream()
+                .map(volunteer -> VolunteerDTO.builder()
+                        .id(volunteer.getId())
+                        .firstname(volunteer.getFirstname())
+                        .lastname(volunteer.getLastname())
+                        .email(volunteer.getEmail())
+                        .canVote(volunteer.isCanVote())
+                        .departmentId(volunteer.getDepartment().getId())
+                        .joinDate(volunteer.getJoinDate())
+                        .projectIds(volunteer.getProjects().stream().map(Project::getId).toList())
+                        .taskIds(volunteer.getTasks().stream().map(Task::getId).toList())
+                        .build()
+                )
                 .toList();
     }
 }

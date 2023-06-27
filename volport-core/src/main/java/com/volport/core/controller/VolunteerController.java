@@ -71,4 +71,9 @@ public class VolunteerController {
         return ResponseEntity.ok(volunteerService.getAllByIds(ids));
     }
 
+    @GetMapping("/assigned")
+    public ResponseEntity<?> getAllAssignedVolunteers(){
+        return ResponseEntity.ok(volunteerService.getAllAssigned());
+    }
+
 }

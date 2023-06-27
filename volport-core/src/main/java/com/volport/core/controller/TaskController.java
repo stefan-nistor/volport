@@ -38,6 +38,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getByProjectId(id));
     }
 
+    @GetMapping("/ongoing")
+    public ResponseEntity<?> getOngoingTasks() {
+        return ResponseEntity.ok(taskService.getOngoingTasks());
+    }
+
     @PostMapping
     public ResponseEntity<?> saveTask(@RequestBody TaskDTO taskDTO) {
         taskService.saveTask(taskDTO);
@@ -48,6 +53,26 @@ public class TaskController {
     public ResponseEntity<?> updateTask(@RequestBody TaskDTO taskDTO, @PathVariable Long id) {
         taskService.updateTask(taskDTO, id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/progress")
+    public ResponseEntity<?> getOverallProgress(){
+        return ResponseEntity.ok(taskService.getOverallProgress());
+    }
+
+    @GetMapping("/progress/{id}")
+    public ResponseEntity<?> getProgressForProject(@PathVariable Long id){
+        return ResponseEntity.ok(taskService.getProjectProgress(id));
+    }
+
+    @GetMapping("/deadline")
+    public ResponseEntity<?> getFirstDeadlineOverall(){
+        return ResponseEntity.ok(taskService.getFirstDeadlineOverall());
+    }
+
+    @GetMapping("/deadline/{id}")
+    public ResponseEntity<?> getFirstProjectDeadline(@PathVariable Long id){
+        return ResponseEntity.ok(taskService.getProjectFirstDeadline(id));
     }
 
 }

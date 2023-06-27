@@ -44,4 +44,5 @@ public interface VolunteerService {
     Integer getDepartmentSize(Long departmentId);
 
     List<VolunteerDTO> getAllByIds(List<Long> ids);
+    List<VolunteerDTO> getAllAssigned();
 }
