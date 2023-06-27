@@ -15,26 +15,25 @@ import {
   Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
-import { getInitials } from 'src/utils/get-initials';
-import { SeverityPill } from '../../components/severity-pill';
 
 export const TimesheetTable = (props) => {
   const {
-    count = 0,
-    items = [],
-    onDeselectAll,
-    onDeselectOne,
-    onPageChange = () => {},
-    onRowsPerPageChange,
-    onSelectAll,
-    onSelectOne,
-    page = 0,
-    rowsPerPage = 0,
-    selected = []
+    tasks = [],
+    volunteers = [],
+    projects = []
   } = props;
+  const getVolunteerNames = (volunteerIds) => {
+    return volunteerIds.map((volunteerId) => {
+      const volunteer = volunteers.find((volunteer) => volunteer.id === volunteerId);
+      return volunteer ? (volunteer.firstname + ' ' + volunteer.lastname) : '';
+    });
+  };
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const getProjectName = (projectId) => {
+    const project = projects.find((project) => project.id === projectId);
+    return project ? project.name : null;
+  }
+
 
   const statusMap = {
     pending: 'warning',
@@ -50,6 +49,9 @@ export const TimesheetTable = (props) => {
             <TableHead>
               <TableRow>
                 <TableCell>
+                  Volunteer
+                </TableCell>
+                <TableCell>
                   Project name
                 </TableCell>
                 <TableCell>
@@ -62,25 +64,25 @@ export const TimesheetTable = (props) => {
                   End Date
                 </TableCell>
                 <TableCell>
-                  Hours
+                  Effort
                 </TableCell>
-                {/*<TableCell>*/}
-                {/*  Status*/}
-                {/*</TableCell>*/}
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((task) => {
-                const isSelected = selected.includes(task.id);
+              {tasks.map((task) => {
+                const volunteerName = getVolunteerNames(task.volunteerIds);
+                const projectName = getProjectName(task.projectId);
 
                 return (
                   <TableRow
                     hover
                     key={task.id}
-                    selected={isSelected}
                   >
                     <TableCell>
-                      {task.project}
+                      {volunteerName}
+                    </TableCell>
+                    <TableCell>
+                      {projectName}
                     </TableCell>
                     <TableCell>
                       {task.name}
@@ -89,16 +91,11 @@ export const TimesheetTable = (props) => {
                       {task.startDate}
                     </TableCell>
                     <TableCell>
-                      {task.endDate}
+                      {task.deadline}
                     </TableCell>
                     <TableCell>
-                      {task.hours}
+                      {task.effort}
                     </TableCell>
-                    {/*<TableCell>*/}
-                    {/*  <SeverityPill color={statusMap[task.status]}>*/}
-                    {/*    {task.status}*/}
-                    {/*  </SeverityPill>*/}
-                    {/*</TableCell>*/}
                   </TableRow>
                 );
               })}
@@ -106,29 +103,12 @@ export const TimesheetTable = (props) => {
           </Table>
         </Box>
       </Scrollbar>
-      <TablePagination
-        component="div"
-        count={count}
-        onPageChange={onPageChange}
-        onRowsPerPageChange={onRowsPerPageChange}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
     </Card>
   );
 };
 
 TimesheetTable.propTypes = {
-  count: PropTypes.number,
-  items: PropTypes.array,
-  onDeselectAll: PropTypes.func,
-  onDeselectOne: PropTypes.func,
-  onPageChange: PropTypes.func,
-  onRowsPerPageChange: PropTypes.func,
-  onSelectAll: PropTypes.func,
-  onSelectOne: PropTypes.func,
-  page: PropTypes.number,
-  rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
+  tasks: PropTypes.array,
+  volunteers: PropTypes.array,
+  projects: PropTypes.array
 };

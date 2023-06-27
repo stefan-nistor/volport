@@ -43,6 +43,16 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getOngoingTasks());
     }
 
+    @GetMapping("/completed")
+    public ResponseEntity<?> getCompletedTasks() {
+        return ResponseEntity.ok(taskService.getCompletedTasks());
+    }
+
+    @GetMapping("/project/{id}/ongoing")
+    public ResponseEntity<?> getProjectOngoingTasks(@PathVariable Long id){
+        return ResponseEntity.ok(taskService.getProjectOngoingTasks(id));
+    }
+
     @PostMapping
     public ResponseEntity<?> saveTask(@RequestBody TaskDTO taskDTO) {
         taskService.saveTask(taskDTO);

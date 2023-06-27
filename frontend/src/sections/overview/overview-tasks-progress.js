@@ -32,7 +32,7 @@ export const OverviewTasksProgress = (props) => {
               Task Progress
             </Typography>
             <Typography variant="h4">
-              {value}%
+              {value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%
             </Typography>
           </Stack>
           <Avatar

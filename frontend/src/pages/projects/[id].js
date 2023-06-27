@@ -247,7 +247,6 @@ const Page = () => {
   };
 
   useEffect(() => {
-    fetchNextDeadline();
     fetchProgress();
     fetchProject();
     fetchPartners();
@@ -287,6 +286,7 @@ const Page = () => {
       console.log('Error saving task: ', error);
     } finally {
       fetchTasks();
+      fetchProgress()
       setOpenTaskDialog(false);
     }
   };

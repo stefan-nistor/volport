@@ -82,24 +82,30 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void saveTask(TaskDTO taskDTO) {
+
+        if(taskDTO.getId() != null){
+            updateTask(taskDTO, taskDTO.getId());
+            return;
+        }
+
         var task = modelMapper.map(taskDTO, Task.class);
         var volunteers = volunteerRepository.findAllById(taskDTO.getVolunteerIds());
         var project = projectRepository.findById(taskDTO.getProjectId()).orElseThrow(() -> new ProjectNotFoundException(ProjectServiceImpl.NOT_FOUND_EXCEPTION));
         task.setVolunteers(volunteers);
         task.setProject(project);
 
-        if(!task.getStatus().isEmpty()) {
+        if (!task.getStatus().isEmpty()) {
             taskRepository.save(task);
             return;
         }
 
-        if(task.getVolunteers().isEmpty()){
+        if (task.getVolunteers().isEmpty()) {
             task.setStatus(UNASSIGNED);
         } else {
             task.setStatus(IN_PROGRESS);
         }
 
-        if(task.getEffort() > 0){
+        if (task.getEffort() > 0) {
             task.setStatus(COMPLETED);
         }
 
@@ -117,7 +123,7 @@ public class TaskServiceImpl implements TaskService {
         task.setProject(project);
         task.setVolunteers(volunteers);
         task.setDescription(taskDTO.getDescription());
-
+        task.setStatus(COMPLETED);
         taskRepository.save(task);
     }
 
@@ -163,7 +169,7 @@ public class TaskServiceImpl implements TaskService {
     public Double getOverallProgress() {
         var completedSize = taskRepository.findByStatus(COMPLETED).size();
         var totalSize = taskRepository.findAll().size();
-        if(totalSize == 0){
+        if (totalSize == 0) {
             return 0.0;
         }
         return (double) completedSize / totalSize * 100;
@@ -173,7 +179,7 @@ public class TaskServiceImpl implements TaskService {
     public Double getProjectProgress(Long id) {
         var totalSize = taskRepository.findByProject_Id(id).size();
         var completedSize = taskRepository.findByProject_IdAndStatus(id, COMPLETED).size();
-        if(totalSize == 0){
+        if (totalSize == 0) {
             return 0.0;
         }
         return (double) completedSize / totalSize * 100;
@@ -192,6 +198,44 @@ public class TaskServiceImpl implements TaskService {
         var task = taskRepository.findAllByOrderByDeadlineAsc().stream().findFirst().orElseThrow();
         Map<String, LocalDate> result = new HashMap<>();
         result.put(task.getName(), task.getDeadline());
-        return  result;
+        return result;
+    }
+
+    @Override
+    public List<TaskDTO> getProjectOngoingTasks(Long id) {
+        return taskRepository.findByProject_IdAndStatus(id, IN_PROGRESS).stream()
+                .map(task -> TaskDTO.builder()
+                        .id(task.getId())
+                        .deadline(task.getDeadline())
+                        .startDate(task.getStartDate())
+                        .status(task.getStatus())
+                        .description(task.getDescription())
+                        .effort(task.getEffort())
+                        .name(task.getName())
+                        .projectId(task.getProject().getId())
+                        .volunteerIds(task.getVolunteers().stream()
+                                .map(Volunteer::getId).toList())
+                        .build()
+                )
+                .toList();
+    }
+
+    @Override
+    public List<TaskDTO> getCompletedTasks() {
+        return taskRepository.findByStatus(COMPLETED).stream()
+                .map(task -> TaskDTO.builder()
+                        .id(task.getId())
+                        .deadline(task.getDeadline())
+                        .startDate(task.getStartDate())
+                        .status(task.getStatus())
+                        .description(task.getDescription())
+                        .effort(task.getEffort())
+                        .name(task.getName())
+                        .projectId(task.getProject().getId())
+                        .volunteerIds(task.getVolunteers().stream()
+                                .map(Volunteer::getId).toList())
+                        .build()
+                )
+                .toList();
     }
 }

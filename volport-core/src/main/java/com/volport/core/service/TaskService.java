@@ -1,6 +1,7 @@
 package com.volport.core.service;
 
 import com.volport.core.dto.TaskDTO;
+import com.volport.core.model.Task;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,4 +29,8 @@ public interface TaskService {
     Map<String, LocalDate> getProjectFirstDeadline(Long id);
 
     Map<String, LocalDate> getFirstDeadlineOverall();
+
+    List<TaskDTO> getProjectOngoingTasks(Long id);
+
+    List<TaskDTO> getCompletedTasks();
 }

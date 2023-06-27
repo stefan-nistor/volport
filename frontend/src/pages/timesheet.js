@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import { subDays } from 'date-fns';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
@@ -9,7 +9,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
+  DialogTitle, MenuItem,
   Stack,
   SvgIcon,
   TextField,
@@ -23,135 +23,121 @@ import { TimesheetTable } from '../sections/timesheet/timesheet-table';
 import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-
-const now = new Date();
-
-// TODO: Fetch data from API
-const data = [
-  {
-    id: '5e887ac47eed253091be22cb',
-    project: 'LAN Party',
-    name: 'Contact Partners',
-    startDate: '16-06-2023',
-    endDate: '20-06-2023',
-    hours: 16
-  },
-  {
-    id: '5e887ac47eed253091be10cb',
-    project: 'FII Practic',
-    name: 'Call Center',
-    startDate: '12-03-2023',
-    endDate: '13-03-2023',
-    hours: 2
-  },
-  {
-    id: '5e887b209c28ac3dd97f6db5',
-    project: 'FII Code',
-    name: 'Mentor',
-    startDate: '8-01-2023',
-    endDate: '8-02-2023',
-    hours: 8
-  },
-  {
-    id: '5e887b7602bdbc4dbb234b27',
-    project: 'Balul de Caritate',
-    name: 'Cor',
-    startDate: '26-11-2022',
-    endDate: '19-12-2022',
-    hours: 8
-  },
-  {
-    id: '5e86805e2bafd54f66cc95c3',
-    project: 'FII Practic',
-    name: 'Mentor',
-    startDate: '03-03-2021',
-    endDate: '10-04-2021',
-    hours: 16
-  },
-  {
-    id: '5e887a1fbefd7938eea9c981',
-    project: 'FII IT-ist',
-    name: 'Supervisior',
-    startDate: '06-11-2022',
-    endDate: '06-11-2022',
-    hours: 6
-  },
-  {
-    id: '5e887d0b3d090c1b8f162003',
-    project: 'Balul Bobocilor',
-    name: 'Tickets',
-    startDate: subDays(now, 3).getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    endDate: now.getDate() + '-' + now.getMonth() + '-' + now.getFullYear(),
-    hours: 8
-  }
-];
-
-const useVolunteers = (page, rowsPerPage) => {
-  return useMemo(
-    () => {
-      return applyPagination(data, page, rowsPerPage);
-    },
-    [page, rowsPerPage]
-  );
-};
-
-const useVolunteerIds = (volunteer) => {
-  return useMemo(
-    () => {
-      return volunteer.map((volunteer) => volunteer.id);
-    },
-    [volunteer]
-  );
-};
+import { useAuth } from '../hooks/use-auth';
 
 const Page = () => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const volunteers = useVolunteers(page, rowsPerPage);
-  const volunteersIds = useVolunteerIds(volunteers);
-  const volunteersSelection = useSelection(volunteersIds);
+  const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
+  const [volunteers, setVolunteers] = useState([]);
+  let [selectedTask, setSelectedTask] = useState(null);
 
   const [formData, setFormData] = useState({
-    project: '',
-    task: '',
+    id: 0,
+    projectId: '',
+    name: '',
     startDate: '',
-    endDate: '',
-    hours: '',
-    // uuid of principal
-    doneBy: ''
+    deadline: '',
+    effort: '',
+    volunteersIds: [],
+    description: ''
   });
 
+  const fetchAllTasks = async () => {
+    try {
+      const { data } = await httpService.get(`/api/task/completed`, {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setCompletedTasks(data);
+    } catch (error) {
+      console.error(`Error at fetching project tasks: ${error}`);
+    }
+  };
+
+  const fetchAssignedVolunteers = async () => {
+    try {
+      const { data } = await httpService.get('/api/volunteer/assigned', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setVolunteers(data);
+    } catch (error) {
+      console.error('Error fetching volunteers: ', error);
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const { data } = await httpService.get('/api/project', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setProjects(data);
+    } catch (error) {
+      console.error(`Error at fetching projects: ${error}`);
+    }
+  };
+
+  const fetchTasks = async (id) => {
+    try {
+      const { data } = await httpService.get(`/api/task/project/${id}/ongoing`, {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setTasks(data);
+    } catch (error) {
+      console.error(`Error at fetching project tasks: ${error}`);
+    }
+  };
+
   const handleAddButtonClick = () => {
+    setFormData({
+      id: 0,
+      projectId: '',
+      name: '',
+      startDate: '',
+      deadline: '',
+      hours: '',
+      volunteersIds: [],
+      description: ''
+    });
     setIsDialogOpen(true);
+    fetchProjects();
+    setSelectedTask(null);
   };
 
   const handleSubmit = () => {
-    const postData = JSON.stringify(formData);
-    httpService.post('/api/tasks/', postData, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then((response) => {
-      if (response.ok) {
-        setIsDialogOpen(false);
-      }
-    });
+    try {
+
+      const updatedTask = { ...selectedTask, effort: formData.hours };
+      const postData = JSON.stringify(updatedTask);
+
+      httpService.post('/api/task/', postData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+    } catch (error) {
+      console.error(`Error at saving timesheet `, error);
+    } finally {
+      fetchAllTasks();
+      setIsDialogOpen(false);
+    }
   };
 
-  const handlePageChange = useCallback(
-    (event, value) => {
-      setPage(value);
-    },
-    []
-  );
-
-  const handleRowsPerPageChange = useCallback(
-    (event) => {
-      setRowsPerPage(event.target.value);
-    },
-    []
-  );
+  useEffect(() => {
+    fetchAllTasks();
+    fetchProjects();
+    fetchAssignedVolunteers();
+  }, []);
 
   return (
     <>
@@ -206,31 +192,54 @@ const Page = () => {
               <DialogContent>
                 <Box>
                   <TextField
-                    label="Project Name"
-                    required={true}
+                    select
+                    label="Project"
                     fullWidth
+                    value={formData.projectId}
                     sx={{ m: 1 }}
-                    value={formData.project}
-                    onChange={(e) => setFormData({ ...formData, projectName: e.target.value })}
-                  />
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        projectId: e.target.value
+                      });
+                    }}
+                  >
+                    {projects.map((project) => (
+                      <MenuItem key={project.id} value={project.id} onClick={() => {
+                        fetchTasks(project.id);
+                      }}>
+                        {`${project.name}`}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                   <TextField
-                    label="Task Name"
+                    select
+                    label="Task"
                     fullWidth
-                    required={true}
+                    value={formData.name}
                     sx={{ m: 1 }}
-                    value={formData.task}
-                    onChange={(e) => setFormData({ ...formData, taskName: e.target.value })}
-                  />
-                  {
-                    //TODO: Fix alignment with date pickers
-                  }
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      name: e.target.value
+                    })}
+                  >
+                    {tasks.map((task) => (
+                      <MenuItem key={task.id} value={task.id} onClick={() => {
+                        setFormData({ ...formData, name: task.name });
+                        setFormData({ ...formData, id: task.id });
+                        setSelectedTask(task);
+                      }}>
+                        {`${task.name}`}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                   <Box sx={{ m: 1 }}>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DatePicker
                         label="Start Date"
                         fullWidth
                         sx={{ p: 1 }}
-                        value={new Date()}
+                        value={selectedTask ? selectedTask.startDate : formData.startDate}
                         onChange={(date) => setFormData({ ...formData, startDate: date })}
                         renderInput={(params) => <TextField {...params} />}
                         inputFormat={'dd-MM-yyyy'}
@@ -241,8 +250,8 @@ const Page = () => {
                         label="End Date"
                         fullWidth
                         sx={{ p: 1 }}
-                        value={new Date()}
-                        onChange={(date) => setFormData({ ...formData, endDate: date })}
+                        value={selectedTask ? selectedTask.deadline : formData.deadline}
+                        onChange={(date) => setFormData({ ...formData, deadline: date })}
                         renderInput={(params) => <TextField {...params} />}
                         inputFormat={'dd-MM-yyyy'}
                       />
@@ -267,17 +276,9 @@ const Page = () => {
               </DialogActions>;
             </Dialog>
             <TimesheetTable
-              count={data.length}
-              items={volunteers}
-              onDeselectAll={volunteersSelection.handleDeselectAll}
-              onDeselectOne={volunteersSelection.handleDeselectOne}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={volunteersSelection.handleSelectAll}
-              onSelectOne={volunteersSelection.handleSelectOne}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              selected={volunteersSelection.selected}
+              tasks={completedTasks}
+              volunteers={volunteers}
+              projects={projects}
             />
           </Stack>
         </Container>
