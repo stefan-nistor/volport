@@ -238,4 +238,13 @@ public class TaskServiceImpl implements TaskService {
                 )
                 .toList();
     }
+
+    @Override
+    public void assign(Long id, Map<String, Long> volunteerId) {
+        var volunteer = volunteerRepository.findById(volunteerId.get("id")).orElseThrow();
+        var task = taskRepository.findById(id).orElseThrow();
+        task.getVolunteers().add(volunteer);
+        task.setStatus(IN_PROGRESS);
+        taskRepository.save(task);
+    }
 }

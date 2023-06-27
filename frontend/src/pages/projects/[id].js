@@ -65,6 +65,8 @@ const Page = () => {
   const [openPartnerDialog, setOpenPartnerDialog] = useState(false);
   const [deadline, setDeadline] = useState('');
   const [progress, setProgress] = useState(0.0);
+  const [openAssignDialog, setOpenAssignDialog] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState(0);
 
   const [taskFormData, setTaskFormData] = useState({
     name: '',
@@ -74,6 +76,10 @@ const Page = () => {
     projectId: id,
     volunteerIds: [],
     status: 'unassigned'
+  });
+
+  const [assignFormData, setAssignFormData] = useState({
+    id:''
   });
 
   const [volunteerFormData, setVolunteerFormData] = useState({
@@ -132,8 +138,6 @@ const Page = () => {
           'Authorization': `Bearer ${user.accessToken}`
         }
       });
-
-      console.log(data);
       setVolunteers(data);
       setLoading(false);
     } catch (error) {
@@ -324,6 +328,30 @@ const Page = () => {
     }
   }
 
+  const handleAssignTask = async () => {
+    console.log(`Selected volunteer id ${assignFormData.id}`)
+    try {
+      const response = await httpService.post(`/api/task/${selectedTaskId}/assign`, assignFormData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+    } catch (error) {
+      console.log('Error asigning task: ', error);
+    } finally {
+      fetchTasks();
+      setOpenAssignDialog(false);
+    }
+
+  };
+
+  const handleEditTask = (taskId) => {
+    console.log('Edit task with id:', taskId);
+    setSelectedTaskId(taskId);
+    setOpenAssignDialog(true);
+  };
+
   return loading ? (<></>) : (
     <>
       <Head>
@@ -392,6 +420,7 @@ const Page = () => {
               <ProjectTasks
                 tasks={tasks}
                 volunteers={volunteers}
+                onEditTask={handleEditTask}
                 sx={{ height: '100%' }}
               />
               <Divider/>
@@ -556,7 +585,6 @@ const Page = () => {
             </Button>
           </DialogActions>
         </Dialog>
-
         <Dialog open={openPartnerDialog}>
           <DialogTitle>Add Partner</DialogTitle>
           <DialogContent>
@@ -583,6 +611,35 @@ const Page = () => {
           <DialogActions>
             <Button onClick={() => setOpenPartnerDialog(false)}>Cancel</Button>
             <Button onClick={handleSubmitPartner} variant="contained"
+                    color="primary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={openAssignDialog} onClose={handleAssignTask}>
+          <DialogTitle>Assign Volunteer</DialogTitle>
+          <DialogContent>
+            <Box>
+              <TextField
+                margin="dense"
+                label="Volunteer"
+                fullWidth
+                select
+                value={assignFormData.id}
+                onChange={(e) => setAssignFormData({ ...assignFormData, id: e.target.value })}
+              >
+                {volunteers.map((volunteer) => (
+                  <MenuItem key={volunteer.id} value={volunteer.id}>
+                    {volunteer.firstname + ' ' + volunteer.lastname}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenAssignDialog(false)}>Cancel</Button>
+            <Button onClick={handleAssignTask} variant="contained"
                     color="primary">
               Add
             </Button>

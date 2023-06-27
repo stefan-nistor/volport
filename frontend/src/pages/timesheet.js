@@ -33,6 +33,7 @@ const Page = () => {
   const [completedTasks, setCompletedTasks] = useState([]);
   const [volunteers, setVolunteers] = useState([]);
   let [selectedTask, setSelectedTask] = useState(null);
+  const [refreshTable, setRefreshTable] = useState(false);
 
   const [formData, setFormData] = useState({
     id: 0,
@@ -125,19 +126,23 @@ const Page = () => {
           'Authorization': `Bearer ${user.accessToken}`
         }
       });
+      setRefreshTable(true);
     } catch (error) {
       console.error(`Error at saving timesheet `, error);
     } finally {
-      fetchAllTasks();
       setIsDialogOpen(false);
     }
   };
 
   useEffect(() => {
-    fetchAllTasks();
-    fetchProjects();
-    fetchAssignedVolunteers();
-  }, []);
+    // Fetch data when refreshTable state changes
+    const fetchData = async () => {
+      await Promise.all([fetchAllTasks(), fetchProjects(), fetchAssignedVolunteers()]);
+      setRefreshTable(false);
+    };
+
+    fetchData();
+  }, [refreshTable]);
 
   return (
     <>

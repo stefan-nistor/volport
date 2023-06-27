@@ -33,4 +33,7 @@ public interface TaskService {
     List<TaskDTO> getProjectOngoingTasks(Long id);
 
     List<TaskDTO> getCompletedTasks();
+
+    void assign(Long id, Map<String, Long> volunteerId);
+
 }

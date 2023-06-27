@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/task")
 public class TaskController {
@@ -57,6 +59,12 @@ public class TaskController {
     public ResponseEntity<?> saveTask(@RequestBody TaskDTO taskDTO) {
         taskService.saveTask(taskDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/{id}/assign")
+    public ResponseEntity<?> assign(@PathVariable Long id, @RequestBody Map<String, Long> volunteerId) {
+        taskService.assign(id, volunteerId);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("{/id}")

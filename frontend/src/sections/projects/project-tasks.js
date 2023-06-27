@@ -7,11 +7,13 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableRow
+  TableRow,
+  IconButton, SvgIcon
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { SeverityPill } from 'src/components/severity-pill';
 import React, { useState } from 'react';
+import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 
 const statusMap = {
   inprogress: 'warning',
@@ -24,6 +26,7 @@ export const ProjectTasks = (props) => {
     tasks = [],
     sx,
     volunteers = [],
+    onEditTask,
   } = props;
   const [expandedRow, setExpandedRow] = useState(null);
 
@@ -38,6 +41,10 @@ export const ProjectTasks = (props) => {
     });
   };
 
+  const handleEditClick = (taskId) => {
+    // Pass the taskId to the parent component
+    onEditTask(taskId);
+  };
   return (
     <Card sx={sx}>
       <CardHeader title="Project Tasks" />
@@ -60,6 +67,8 @@ export const ProjectTasks = (props) => {
                 </TableCell>
                 <TableCell>
                   Status
+                </TableCell>
+                <TableCell>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -89,10 +98,15 @@ export const ProjectTasks = (props) => {
                           {task.status}
                         </SeverityPill>
                       </TableCell>
+                      <TableCell>
+                        <SvgIcon onClick={() => handleEditClick(task.id)}>
+                          <EllipsisVerticalIcon />
+                        </SvgIcon>
+                      </TableCell>
                     </TableRow>
                     {expandedRow === index && (
                       <TableRow>
-                        <TableCell colSpan={5}>
+                        <TableCell colSpan={6}>
                           {task.description}
                         </TableCell>
                       </TableRow>
@@ -112,4 +126,5 @@ ProjectTasks.propTypes = {
   tasks: PropTypes.array,
   volunteers: PropTypes.array,
   sx: PropTypes.object,
+  onEditTask: PropTypes.func.isRequired,
 };
