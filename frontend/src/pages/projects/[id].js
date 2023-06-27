@@ -30,6 +30,22 @@ import { VolunteerTable } from '../../sections/volunteer/volunteer-table';
 import { PartnersTable } from '../../sections/partners/partners-table';
 import { ProjectTasks } from '../../sections/projects/project-tasks';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
+import { ProjectTitle } from '../../sections/partners/project-title';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+const now = new Date();
+let dd = now.getDate();
+let mm = now.getMonth() + 1;
+const yyyy = now.getFullYear();
+if (dd < 10) {
+  dd = `0${dd}`;
+}
+
+if (mm < 10) {
+  mm = `0${mm}`;
+}
 
 const Page = () => {
   const router = useRouter();
@@ -38,16 +54,38 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState({});
   const [volunteers, setVolunteers] = useState([]);
+  const [allVolunteers, setAllVolunteers] = useState([]);
   const [partners, setPartners] = useState([]);
+  const [allPartners, setAllPartners] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [departmentLabels, setDepartmentLabels] = useState([]);
-  let [departments, setDepartments] = useState([]);
+  let [departmentLabels, setDepartmentLabels] = useState([]);
   let [departmentSizes, setDepartmentSizes] = useState([]);
+  const [openTaskDialog, setOpenTaskDialog] = useState(false);
+  const [openVolunteerDialog, setOpenVolunteerDialog] = useState(false);
+  const [openPartnerDialog, setOpenPartnerDialog] = useState(false);
+  const [deadline, setDeadline] = useState('');
+  const [progress, setProgress] = useState(0.0);
 
-  const [openDialog, setOpenDialog] = useState(false);
+  const [taskFormData, setTaskFormData] = useState({
+    name: '',
+    description: '',
+    deadline: `${yyyy}-${mm}-${dd}`,
+    startDate: `${yyyy}-${mm}-${dd}`,
+    projectId: id,
+    volunteerIds: [],
+    status: 'unassigned'
+  });
+
+  const [volunteerFormData, setVolunteerFormData] = useState({
+    volunteerIds: []
+  });
+
+  const [partnerFormData, setPartnerFormData] = useState({
+    partnerIds: []
+  });
 
   function calculateDepartmentSizes(volunteers, departments) {
-    const departmentSizes = {};
+    let departmentSizes = {};
 
     // Initialize department sizes with 0
     departments.forEach((department) => {
@@ -65,14 +103,10 @@ const Page = () => {
     });
 
     // Create an array of sizes based on department IDs
-    const sizesArray = departments.map((department) => departmentSizes[department.id]);
+    let sizesArray = departments.map((department) => departmentSizes[department.id]);
 
     return sizesArray;
   }
-
-  function handleCloseDialog() {
-
-  };
 
   const fetchProject = async () => {
     try {
@@ -106,6 +140,36 @@ const Page = () => {
       console.log(`Error at fetching project volunteers: ${error}`);
     }
   };
+
+  const fetchAllVolunteers = async () => {
+    try {
+      setLoading(true);
+      const { data } = await httpService.get(`/api/volunteer`, {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setAllVolunteers(data);
+      setLoading(false);
+    } catch (error) {
+      console.log(`Error at fetching all volunteers: ${error}`);
+    }
+  };
+
+  const fetchAllPartners = async () => {
+    try {
+      setLoading(true);
+      const { data } = await httpService.get(`/api/partner`, {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setAllPartners(data);
+      setLoading(false);
+    } catch (error) {
+      console.log(`Error at fetching all partners: ${error}`);
+    }
+  }
 
   const fetchPartners = async () => {
     try {
@@ -143,32 +207,122 @@ const Page = () => {
 
   const fetchDepartments = async () => {
     try {
-      const { data } = await httpService.get('/api/department', {
+      setLoading(true);
+      const { data } = await httpService.get(`/api/project/${id}/departments`, {
         headers: {
           'Authorization': `Bearer ${user.accessToken}`
         }
       });
-      setDepartments(data);
-
-      const labels = data.map((dept) => dept.acronym);
-      setDepartmentLabels(labels);
-      setDepartmentSizes(calculateDepartmentSizes(volunteers, departments));
+      setDepartmentLabels(Object.keys(data));
+      setDepartmentSizes(Object.values(data));
+      setLoading(false);
     } catch (error) {
       console.log('Error fetching department data: ', error);
     }
   };
 
+  const fetchNextDeadline = async () => {
+    try {
+      const {data} = await httpService.get(`/api/task/deadline/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setDeadline(data);
+    } catch (error) {
+      console.error('Error fetching next deadline: ', error);
+    }
+  };
+  const fetchProgress = async () => {
+    try {
+      const {data} = await httpService.get(`/api/task/progress/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setProgress(data);
+    } catch (error) {
+      console.error('Error fetching department data: ', error);
+    }
+  };
+
   useEffect(() => {
+    fetchNextDeadline();
+    fetchProgress();
     fetchProject();
-    fetchVolunteers();
     fetchPartners();
-    fetchTasks();
+    fetchVolunteers();
     fetchDepartments();
+    fetchTasks();
+    fetchAllVolunteers();
+    fetchAllPartners();
   }, []);
 
   const handleAddTask = () => {
-    setOpenDialog(true);
+    setOpenTaskDialog(true);
   };
+
+  const handleAddVolunteer = () => {
+    setOpenVolunteerDialog(true);
+  };
+
+  const handleAddPartner = () => {
+    setOpenPartnerDialog(true);
+  };
+
+  const handleSubmitTask = async () => {
+    try {
+      if (taskFormData.volunteerIds.length > 0) {
+        taskFormData.status = 'inprogress';
+      }
+      console.log(taskFormData);
+      const response = await httpService.post('/api/task', taskFormData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.log('Error saving task: ', error);
+    } finally {
+      fetchTasks();
+      setOpenTaskDialog(false);
+    }
+  };
+
+  const handleSubmitVolunteer = async () => {
+    try {
+      const response = await httpService.post(`/api/project/${id}`, volunteerFormData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+    } catch (error) {
+      console.log('Error saving task: ', error);
+    } finally {
+      fetchVolunteers();
+      fetchDepartments();
+      setOpenVolunteerDialog(false);
+    }
+  };
+
+  const handleSubmitPartner = async () => {
+    try {
+      const response = await httpService.post(`/api/project/${id}`, partnerFormData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+    } catch (error) {
+      console.log('Error saving task: ', error);
+    } finally {
+      fetchPartners();
+      setOpenPartnerDialog(false);
+    }
+  }
 
   return loading ? (<></>) : (
     <>
@@ -194,10 +348,9 @@ const Page = () => {
               sm={6}
               lg={3}
             >
-              <OverviewUpcomingEvents
-                date="22 July 2023"
+              <ProjectTitle
                 sx={{ height: '100%' }}
-                value="AG"
+                project={project}
               />
             </Grid>
             <Grid
@@ -219,7 +372,7 @@ const Page = () => {
             >
               <OverviewTasksProgress
                 sx={{ height: '100%' }}
-                value={75.5}
+                value={progress}
               />
             </Grid>
             <Grid
@@ -288,6 +441,7 @@ const Page = () => {
                 )}
                 size="small"
                 variant="text"
+                onClick={handleAddVolunteer}
               >
                 Add
               </Button>
@@ -310,6 +464,7 @@ const Page = () => {
                 )}
                 size="small"
                 variant="text"
+                onClick={handleAddPartner}
               >
                 Add
               </Button>
@@ -317,7 +472,7 @@ const Page = () => {
           </Box>
         </Container>
 
-        <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <Dialog open={openTaskDialog} onClose={handleSubmitTask}>
           <DialogTitle>Add Task</DialogTitle>
           <DialogContent>
             {/* Form fields */}
@@ -326,38 +481,109 @@ const Page = () => {
               margin="dense"
               label="Name"
               fullWidth
-              // Add necessary event handlers and value
+              value={taskFormData.name}
+              onChange={(e) => setTaskFormData({ ...taskFormData, name: e.target.value })}
             />
             <TextField
               margin="dense"
               label="Description"
               fullWidth
-              // Add necessary event handlers and value
-            />
-            <TextField
-              margin="dense"
-              label="Deadline"
-              fullWidth
-              // Add necessary event handlers and value
+              value={taskFormData.description}
+              onChange={(e) => setTaskFormData({ ...taskFormData, description: e.target.value })}
             />
             <TextField
               margin="dense"
               label="Volunteer"
               fullWidth
               select
-              // Add necessary event handlers and value
+              value={taskFormData.volunteerIds}
+              onChange={(e) => setTaskFormData({ ...taskFormData, volunteerIds: [e.target.value] })}
             >
-              {/* Render dropdown options from volunteers */}
               {volunteers.map((volunteer) => (
                 <MenuItem key={volunteer.id} value={volunteer.id}>
                   {volunteer.firstname + ' ' + volunteer.lastname}
                 </MenuItem>
               ))}
             </TextField>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Deadline"
+                fullWidth
+                sx={{ p: 1 }}
+                value={taskFormData.deadline}
+                onChange={(date) => setTaskFormData({ ...taskFormData, deadline: date })}
+                renderInput={(params) => <TextField {...params} />}
+                inputFormat={'yyyy-MM-dd'}
+              />
+            </LocalizationProvider>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-            <Button onClick={handleCloseDialog} variant="contained" color="primary">
+            <Button onClick={() => setOpenTaskDialog(false)}>Cancel</Button>
+            <Button onClick={handleSubmitTask} variant="contained" color="primary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={openVolunteerDialog} onClose={handleSubmitVolunteer}>
+          <DialogTitle>Add Volunteer</DialogTitle>
+          <DialogContent>
+            <Box>
+              <TextField
+                select
+                label="Volunteer"
+                fullWidth
+                value={volunteerFormData.volunteerIds}
+                sx={{ m: 1 }}
+                onChange={(e) => setVolunteerFormData({
+                  ...volunteerFormData,
+                  volunteerIds: [e.target.value]
+                })}
+              >
+                {allVolunteers.map((volunteer) => (
+                  <MenuItem key={volunteer.id} value={volunteer.id}>
+                    {`${volunteer.firstname} ${volunteer.lastname}`}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenVolunteerDialog(false)}>Cancel</Button>
+            <Button onClick={handleSubmitVolunteer} variant="contained"
+                    color="primary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={openPartnerDialog}>
+          <DialogTitle>Add Partner</DialogTitle>
+          <DialogContent>
+            <Box>
+              <TextField
+                select
+                label="Partner"
+                fullWidth
+                value={partnerFormData.partnerIds}
+                sx={{ m: 1 }}
+                onChange={(e) => setPartnerFormData({
+                  ...partnerFormData,
+                  partnerIds: [e.target.value]
+                })}
+              >
+                {allPartners.map((partner) => (
+                  <MenuItem key={partner.id} value={partner.id}>
+                    {`${partner.name}`}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenPartnerDialog(false)}>Cancel</Button>
+            <Button onClick={handleSubmitPartner} variant="contained"
+                    color="primary">
               Add
             </Button>
           </DialogActions>

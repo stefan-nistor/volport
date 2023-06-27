@@ -25,7 +25,19 @@ const statusMap = {
 };
 
 export const OverviewOngoingTasks = (props) => {
-  const { tasks = [], sx } = props;
+  const { tasks = [], sx, volunteers, projects } = props;
+
+  const getVolunteerNames = (volunteerIds) => {
+    return volunteerIds.map((volunteerId) => {
+      const volunteer = volunteers.find((volunteer) => volunteer.id === volunteerId);
+      return volunteer ? (volunteer.firstname + ' ' + volunteer.lastname) : '';
+    });
+  };
+
+  const getProjectName = (projectId) => {
+    const project = projects.find((project) => project.id === projectId);
+    return project ? project.name : null;
+  }
 
   return (
     <Card sx={sx}>
@@ -45,29 +57,30 @@ export const OverviewOngoingTasks = (props) => {
                   Task Name
                 </TableCell>
                 <TableCell sortDirection="desc">
-                  Start date
+                  Deadline
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {tasks.map((task) => {
-                const createdAt = format(task.createdAt, 'dd/MM/yyyy');
+                const volunteerName = getVolunteerNames(task.volunteerIds);
+                const projectName = getProjectName(task.projectId);
                 return (
                   <TableRow
                     hover
                     key={task.id}
                   >
                     <TableCell>
-                      {task.customer.name}
+                      {volunteerName}
                     </TableCell>
                     <TableCell>
-                      {task.project}
+                      {projectName}
                     </TableCell>
                     <TableCell>
-                      {task.task}
+                      {task.name}
                     </TableCell>
                     <TableCell>
-                      {createdAt}
+                      {task.deadline}
                     </TableCell>
                   </TableRow>
                 );
@@ -97,5 +110,7 @@ export const OverviewOngoingTasks = (props) => {
 
 OverviewOngoingTasks.prototype = {
   tasks: PropTypes.array,
-  sx: PropTypes.object
+  sx: PropTypes.object,
+  volunteers: PropTypes.array,
+  projects: PropTypes.array,
 };

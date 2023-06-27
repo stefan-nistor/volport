@@ -1,14 +1,8 @@
-import { format } from 'date-fns';
 import PropTypes from 'prop-types';
-import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import {
   Box,
-  Button,
   Card,
-  CardActions,
   CardHeader,
-  Divider,
-  SvgIcon,
   Table,
   TableBody,
   TableCell,
@@ -18,7 +12,6 @@ import {
 import { Scrollbar } from 'src/components/scrollbar';
 import { SeverityPill } from 'src/components/severity-pill';
 import React, { useState } from 'react';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 
 const statusMap = {
   inprogress: 'warning',
@@ -41,7 +34,7 @@ export const ProjectTasks = (props) => {
   const getVolunteerNames = (volunteerIds) => {
     return volunteerIds.map((volunteerId) => {
       const volunteer = volunteers.find((volunteer) => volunteer.id === volunteerId);
-      return volunteer ? (volunteer.firstname + volunteer.lastname) : '';
+      return volunteer ? (volunteer.firstname + ' ' + volunteer.lastname) : '';
     });
   };
 
@@ -54,7 +47,7 @@ export const ProjectTasks = (props) => {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  Volunteers
+                  Volunteer
                 </TableCell>
                 <TableCell>
                   Task Name

@@ -21,6 +21,24 @@ const Page = () => {
   let [departments, setDepartments] = useState([]);
   let [departmentLabels, setDepartmentLabels] = useState([]);
   let [departmentSizes, setDepartmentSizes] = useState([]);
+  const [ongoingTasks, setOngoingTasks] = useState([]);
+  const [volunteers, setVolunteers] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [deadline, setDeadline] = useState('');
+  const [progress, setProgress] = useState(0.0);
+
+  const fetchAssignedVolunteers = async () => {
+    try {
+      const { data } = await httpService.get('/api/volunteer/assigned', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setVolunteers(data);
+    } catch (error) {
+      console.error('Error fetching volunteers: ', error);
+    }
+  }
 
   const fetchPartnersNumber = async () => {
     try {
@@ -32,7 +50,7 @@ const Page = () => {
       console.log(data);
       setPartnersNum(data);
     } catch (error) {
-      console.log('Error fetching partners number: ', error);
+      console.error('Error fetching partners number: ', error);
     }
   };
 
@@ -45,7 +63,7 @@ const Page = () => {
       });
       setVolunteerNum(data);
     } catch (error) {
-      console.log('Error fetching volunteer number: ', error);
+      console.error('Error fetching volunteer number: ', error);
     }
   };
 
@@ -72,14 +90,72 @@ const Page = () => {
       const sizes = sizesResponses.map((response) => response.data);
       setDepartmentSizes(sizes);
     } catch (error) {
-      console.log('Error fetching department data: ', error);
+      console.error('Error fetching department data: ', error);
     }
   };
+
+  const fetchOngoingTasks = async () => {
+    try {
+      const { data } = await httpService.get('/api/task/ongoing', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setOngoingTasks(data);
+    } catch (error) {
+      console.error('Error fetching department data: ', error);
+    }
+  };
+
+  const fetchNextDeadline = async () => {
+    try {
+      const {data} = await httpService.get('/api/task/deadline', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setDeadline(data);
+    } catch (error) {
+      console.error('Error fetching next deadline: ', error);
+    }
+  };
+  const fetchProgress = async () => {
+    try {
+      const {data} = await httpService.get('/api/task/progress', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setProgress(data);
+    } catch (error) {
+      console.error('Error fetching department data: ', error);
+    }
+  };
+
+
+  const fetchProjects = async () => {
+    try {
+      const { data } = await httpService.get('/api/project', {
+        headers: {
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+      setProjects(data);
+    } catch (error) {
+      console.log('Error fetching department data: ', error);
+    }
+  }
+
 
   useEffect(() => {
     fetchVolunteerNumber();
     fetchPartnersNumber();
     fetchDepartments();
+    fetchAssignedVolunteers();
+    fetchProjects();
+    fetchOngoingTasks();
+    fetchNextDeadline();
+    fetchProgress();
   }, []);
 
   return (
@@ -109,7 +185,8 @@ const Page = () => {
               <OverviewUpcomingEvents
                 date=""
                 sx={{ height: '100%' }}
-                value="None"
+                value={Object.keys(deadline)[0]}
+                date={Object.values(deadline)[0]}
               />
             </Grid>
             <Grid
@@ -131,7 +208,7 @@ const Page = () => {
             >
               <OverviewTasksProgress
                 sx={{ height: '100%' }}
-                value={75.5}
+                value={progress}
               />
             </Grid>
             <Grid
@@ -150,8 +227,10 @@ const Page = () => {
             >
               {/* place list of my tasks*/}
               <OverviewOngoingTasks
-                tasks={TASKS}
+                tasks={ongoingTasks}
                 sx={{ height: '100%' }}
+                volunteers={volunteers}
+                projects={projects}
               />
 
             </Grid>
