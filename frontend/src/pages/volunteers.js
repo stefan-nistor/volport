@@ -194,7 +194,6 @@ const Page = () => {
                 </Button>
               </DialogActions>
             </Dialog>
-            <VolunteerSearch/>
             <VolunteerTable
               count={data.length}
               items={data}

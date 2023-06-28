@@ -25,10 +25,12 @@ export const ProjectCard = (props) => {
               pb: 3
             }}
           >
-            <Avatar
-              src={project.logo}
-              variant="square"
-            />
+            {project.logo && (
+              <Avatar
+                src={project.logo}
+                variant="square"
+              />
+            )}
           </Box>
           <Typography
             align="center"

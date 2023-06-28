@@ -5,10 +5,10 @@ import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import {
   Box,
   Button,
-  Container,
+  Container, Dialog, DialogActions, DialogContent, DialogTitle,
   Pagination,
   Stack,
-  SvgIcon,
+  SvgIcon, TextField,
   Typography,
   Unstable_Grid2 as Grid
 } from '@mui/material';
@@ -16,7 +16,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { ProjectCard } from 'src/sections/projects/project-card';
 import { ProjectsSearch } from 'src/sections/projects/projects-search';
 import { useAuth } from '../hooks/use-auth';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import httpService from '../utils/http-client';
 
 export const projects = [
@@ -80,6 +80,34 @@ const Page = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name:'',
+    description:'',
+    volunteers:[],
+    tasks:[]
+  })
+
+  const handleAddButtonClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await httpService.post('/api/project', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.accessToken}`
+        }
+      });
+    } catch (error) {
+      console.error('Error saving project: ', error);
+    } finally {
+      fetchProjects();
+      setIsDialogOpen(false);
+    }
+  }
 
   useEffect(() => {
     fetchProjects();
@@ -140,12 +168,12 @@ const Page = () => {
                     </SvgIcon>
                   )}
                   variant="contained"
+                  onClick={handleAddButtonClick}
                 >
                   Add
                 </Button>
               </div>
             </Stack>
-            <ProjectsSearch/>
             <Grid
               container
               spacing={3}
@@ -167,12 +195,39 @@ const Page = () => {
                 justifyContent: 'center'
               }}
             >
-              <Pagination
-                count={3}
-                size="small"
-              />
             </Box>
           </Stack>
+          <Dialog
+            open={isDialogOpen} onClose={() => setIsDialogOpen(false)}
+            >
+            <DialogTitle>Add Project</DialogTitle>
+            <DialogContent>
+              <Box>
+                <TextField
+                  label="Name"
+                  required={true}
+                  fullWidth
+                  sx={{m:1}}
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                <TextField
+                  label="Description"
+                  required={true}
+                  fullWidth
+                  sx={{m:1}}
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  />
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+              <Button color="primary" variant="contained" onClick={(() => handleSubmit())}>
+                Save
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Container>
       </Box>
     </>

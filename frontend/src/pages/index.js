@@ -183,7 +183,6 @@ const Page = () => {
               lg={3}
             >
               <OverviewUpcomingEvents
-                date=""
                 sx={{ height: '100%' }}
                 value={Object.keys(deadline)[0]}
                 date={Object.values(deadline)[0]}
