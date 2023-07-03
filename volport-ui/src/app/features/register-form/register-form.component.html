@@ -1,0 +1,81 @@
+<script src="register-form.component.ts"></script>
+<form
+  class="form-container"
+  [formGroup]="registerFormGroup"
+  (submit)="submit()"
+>
+  <p>Register to Volport</p>
+
+  <mat-form-field appearance="fill" hintLabel="Min. 5 chars">
+    <mat-label>Enter your first name:</mat-label>
+    <input matInput formControlName="fullName" required maxlength="50" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" hintLabel="Min. 5 chars">
+    <mat-label>Enter your last name:</mat-label>
+    <input matInput formControlName="fullName" required maxlength="50" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Select your department:</mat-label>
+    <mat-select formControlName="group">
+      <mat-option value="IT">IT</mat-option>
+      <mat-option value="PRM">PRM</mat-option>
+      <mat-option value="PRO">PRO</mat-option>
+      <mat-option value="RE">RE</mat-option>
+      <mat-option value="RI">RI</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Enter your email:</mat-label>
+    <input
+      matInput
+      placeholder="example@example.com"
+      formControlName="email"
+      required
+      maxlength="50"
+    />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" hintLabel="Min. 10 chars">
+    <mat-label>Enter your password:</mat-label>
+    <input
+      matInput
+      [type]="hide1 ? 'password' : 'text'"
+      formControlName="password"
+    />
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="hide1 = !hide1"
+      [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hide1"
+    >
+      <mat-icon>{{ hide1 ? "visibility_off" : "visibility" }}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" hintLabel="Re-enter your password">
+    <mat-label>Confirm password:</mat-label>
+    <input
+      matInput
+      [type]="hide ? 'password' : 'text'"
+      formControlName="confirmPassword"
+      required
+    />
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="hide = !hide"
+      [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hide"
+    >
+      <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <button color="primary" mat-button class="submit-btn">
+    Register<mat-icon style="margin-left: 4px">send</mat-icon>
+  </button>
+</form>

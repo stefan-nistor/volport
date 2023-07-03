@@ -1,21 +1,13 @@
 package com.volport.core.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -24,26 +16,25 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "volunteers")
-public class Volunteer{
+public class Volunteer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToMany
-    @JoinColumn(name = "dept_id")
-    private List<Department> departments;
-    @OneToMany
-    @JoinColumn(name = "project_id")
-    private List<Project> projects;
-
     private String firstname;
     private String lastname;
     private String email;
-    private String password;
-    private Date joinDate;
+    private LocalDate joinDate;
     private boolean canVote;
 
-    //TODO: link volunteer to project and department table
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dept_id")
+    private Department department;
+
+    @ManyToMany(mappedBy = "volunteers")
+    private List<Project> projects;
+
+    @ManyToMany(mappedBy = "volunteers")
+    private List<Task> tasks;
 
 }

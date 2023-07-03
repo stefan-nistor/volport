@@ -18,8 +18,11 @@ public interface VolunteerService {
      * Add a new volunteer in database
      *
      * @param volunteerDTO volunteer to be added
+     * @return
      */
-    void addVolunteer(VolunteerDTO volunteerDTO);
+    VolunteerDTO addVolunteer(VolunteerDTO volunteerDTO);
+
+    void addVolunteerList(List<VolunteerDTO> volunteerDTOS);
 
     /**
      * Update a volunteer
@@ -37,4 +40,9 @@ public interface VolunteerService {
      * @return True if the volunteer was deleted successfully, False otherwise
      */
     boolean deleteVolunteer(Long id);
+
+    Integer getDepartmentSize(Long departmentId);
+
+    List<VolunteerDTO> getAllByIds(List<Long> ids);
+    List<VolunteerDTO> getAllAssigned();
 }

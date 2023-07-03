@@ -1,16 +1,22 @@
 package com.volport.core.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -28,6 +34,23 @@ public class Project {
     private String name;
     private String description;
 
-    //TODO: link project to the volunteer table
+    @ManyToMany
+    @JoinTable(
+            name = "project_volunteers",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "volunteer_id")
+    )
+    private Set<Volunteer> volunteers;
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_partners",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "partner_id")
+    )
+    private List<Partner> partners;
+
+    @Column(name = "logo")
+    private String logo;
 
 }

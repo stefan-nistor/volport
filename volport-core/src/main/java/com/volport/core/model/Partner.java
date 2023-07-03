@@ -1,18 +1,20 @@
 package com.volport.core.model;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -28,10 +30,13 @@ public class Partner {
     private Long id;
 
     private String name;
+    private String contact;
+    private String fiscalID;
+    private String bank;
+    private String bankAccount;
+    private String observations;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "partners")
     private List<Project> projects;
-
-    // TODO: create proper relationship between projects and partners
 
 }
